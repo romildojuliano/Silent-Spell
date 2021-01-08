@@ -4,80 +4,42 @@ import {
   StyleSheet, 
   Text, 
   View, 
-  Dimensions,
-  StatusBar, 
-  ActivityIndicator, 
-  TouchableOpacity, 
-  Image 
+  Dimensions
 } from 'react-native'
+import { Button } from 'react-native-elements';
 
 // Módulos do Tensorflow.js
 import * as tf from '@tensorflow/tfjs'
-import { fetch, cameraWithTensors } from '@tensorflow/tfjs-react-native'
+import { cameraWithTensors, detectGLCapabilities } from '@tensorflow/tfjs-react-native'
 import * as handpose from '@tensorflow-models/handpose'
-// import * as mobilenet from '@tensorflow-models/mobilenet'
-
+require('@tensorflow/tfjs-backend-webgl'); // Necessário?
 
 // Módulos do Expo
 import { Camera } from 'expo-camera';
 import Constants from 'expo-constants'
 import * as Permissions from 'expo-permissions'
-import * as ImagePicker from 'expo-image-picker'
 
-// Outros módulos
-import * as jpeg from 'jpeg-js'
-
+// Componente de alta ordem para usar as funções da câmera 
 const TensorCamera = cameraWithTensors(Camera);
+
+// Dimensões do aparelho
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 class App extends React.Component {
   
   state = {
-    isTfReady: false,
-    isModelReady: false,
-    predictions: null,
-    image: null,
-    hasPermission: null,
-    type: Camera.Constants.Type.front,
-    fluffyHands: false
+    isTfReady: false,                   // Determina se o módulo do TensorFlow está carregado
+    isModelReady: false,                // Determina se o modelo do @tensorflow-models/handpose está carregado     
+    hasPermission: null,                // Determina se o usuário concedeu permissão ao acesso das cameras
+    type: Camera.Constants.Type.front,  // Define o tipo de câmera padrão que será usada na aplicação
+    showTensorCamera: false
   }
 
-  selectImage = async () => {
-    try {
-      let response = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3]
-      })
-  
-      if (!response.cancelled) {
-        const source = { uri: response.uri }
-        this.setState({ image: source })
-        this.classifyImage()
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  imageToTensor(rawImageData) {
-    const TO_UINT8ARRAY = true
-    const { width, height, data } = jpeg.decode(rawImageData, TO_UINT8ARRAY)
-    // Drop the alpha channel info for mobilenet
-    const buffer = new Uint8Array(width * height * 3)
-    let offset = 0 // offset into original data
-    for (let i = 0; i < buffer.length; i += 3) {
-      buffer[i] = data[offset]
-      buffer[i + 1] = data[offset + 1]
-      buffer[i + 2] = data[offset + 2]
-
-      offset += 4
-    }
-
-    return tf.tensor3d(buffer, [height, width, 3])
-  }
-
+  /*
+  Solicita o acesso à câmera de forma assícrona;
+  Caso não seja garantido, o app não irá funcionar;
+  */
   getPermissionAsync = async () => {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY)
@@ -87,83 +49,53 @@ class App extends React.Component {
     }
   }
 
-  classifyImage = async () => {
-    try {
-      //const imageAssetPath = Image.resolveAssetSource(this.state.image)
-      //const response = await fetch(imageAssetPath.uri, {}, { isBinary: true })
-      const response = await fetch('https://upload.wikimedia.org/wikipedia/commons/3/32/Human-Hands-Front-Back.jpg', {}, { isBinary: true })
-      //console.log(response)
-      const rawImageData = await response.arrayBuffer()
-      const imageTensor = this.imageToTensor(rawImageData)
-      const predictions = await this.model.estimateHands(imageTensor)
-      this.setState({ predictions })
-
-      console.log(predictions)
-      console.log('foi a predicao')
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   async componentDidMount() {
+    // Altera o estado para indicar que o módulo do TensorFlow está carregado
     await tf.ready()
-    this.setState({
-      isTfReady: true
-    })
+    this.setState({ isTfReady: true })
+
+    // Altera o estado para indicar que o modelo do Handpose está carregado 
     this.model = await handpose.load()
     this.setState({ isModelReady: true })
 
-    //Output in Expo console
-    console.log(this.state.isTfReady)
+    // Solicita permissão do usuário para ter acesso às câmeras
     this.getPermissionAsync()
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
+
+    // Determina se o usuário garantiu permissão de acesso às câmeras ou não
     this.setState({ hasPermission: status === 'granted' });
+
   }
 
-  handleCameraStream = (imageAsTensors) => {
-    console.log("chegou aqui?")
+  handleCameraStream = (images, updatePreview, gl) => {
+
+    console.log(detectGLCapabilities(gl));
+
     const loop = async () => {
-      //console.log("opa?")
-      const nextImageTensor = await imageAsTensors.next().value;
-      //console.log("nexImage")
-      //await getPrediction(nextImageTensor);
-      const predictions = await this.model.estimateHands(nextImageTensor)
-      console.log(predictions) // Printa os valores estimados pelo modelo
-      //console.log("prediction")
-      requestAnimationFrameId = requestAnimationFrame(loop);
+      const nextImageTensor = await images.next().value;
+      
+      const predictions = await this.model.estimateHands(nextImageTensor);
+
+      // Printa os valores estimados pelo modelo
+      console.log(predictions) 
+      
+      /* 
+      Funções utilizadas pelo Tensorflow para atualizar os frames da 
+      câmera na tela do celular. O UpdatePreview atualiza o frame,
+      enquanto que o gl.endFrameEXP procoessa o próximo frame.
+      */
+      updatePreview();
+      gl.endFrameEXP();
+
+      // Função que recebe o proóximo frame e retorna ao início do loop
+      requestAnimationFrame(loop);
     };
     loop();
   }
 
-  handposeHandler = async () => {
-    const loop = async () => {
-      const model = await handpose.load();
-      const predictions = await model.estimateHands(document.querySelector('video'));
-      console.log(predictions);
-    }
-    loop();
-  }
-
-  render() {
-    let textureDims;
-    if (Platform.OS === 'ios') {
-      textureDims = {
-        height: 1920,
-        width: 1080,
-      };
-    } else {
-      textureDims = {
-        height: 1200,
-        width: 1600,
-      };
-    }
-    const tensorDims = { width: 152, height: 200 };
-
-    const { isTfReady, isModelReady, predictions, image, hasPermission } = this.state
-
-    if (hasPermission === true) {
-      return (
-        <View>
+  renderTensorCamera(textureDims, tensorDims) {
+    return (
+      <View>
           <Text style={styles.detectionText} >
             Estimating hands. Check log at the console.
           </Text>
@@ -178,12 +110,14 @@ class App extends React.Component {
             resizeWidth={tensorDims.width}
             resizeDepth={3}
             onReady={this.handleCameraStream}
-            autorender={true}
+            autorender={false}
           />
         </View>
-    );
-    } else {
-      return (
+    )
+  }
+
+  loadingScreen(isTfReady, isModelReady, hasPermission) {
+    return (
         <View style={{ marginTop: SCREEN_HEIGHT * .5 }}>
           { 
             (isTfReady) ? 
@@ -200,29 +134,41 @@ class App extends React.Component {
           }
 
           { 
-            (Permissions) ? 
+            (hasPermission) ? 
             <Text style={styles.loaded}>Permissions granted</Text>
             :
             <Text style={styles.notLoaded}>Waiting for permissions...</Text>
           }
           
         </View>
-      )
-    }
-    
+    );
   }
 
+  render() {
+    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1200, width: 1600 };
+    const tensorDims = { width: 152, height: 200 };
 
+    const { isTfReady, isModelReady, hasPermission } = this.state;
+
+    if (hasPermission === true) {
+      // Carrega o componente do TensorCamera e permite a visualização câmera
+      return this.renderTensorCamera(textureDims, tensorDims);
+    } 
+    
+    else {
+      // Tela de carregamento inicial
+      return this.loadingScreen(isTfReady, isModelReady, hasPermission);
+    }
+  }
 }
 
 const styles = StyleSheet.create({
   tfCameraView: {
-    width: 700/2,
-    height: 800/2,
+    width: SCREEN_WIDTH * .75,
+    height: SCREEN_HEIGHT * .5 ,
     zIndex: 1,
     borderWidth: 0,
     borderRadius: 0,
-    //marginTop: SCREEN_HEIGHT * .25,
     alignSelf: 'center',
     alignContent: 'center',
     justifyContent: 'center'
@@ -252,4 +198,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default App
+export default App;
