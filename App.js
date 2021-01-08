@@ -4,7 +4,8 @@ import {
   StyleSheet, 
   Text, 
   View, 
-  Dimensions
+  Dimensions,
+  TouchableOpacity
 } from 'react-native'
 import { Button } from 'react-native-elements';
 
@@ -148,11 +149,34 @@ class App extends React.Component {
     const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1200, width: 1600 };
     const tensorDims = { width: 152, height: 200 };
 
-    const { isTfReady, isModelReady, hasPermission } = this.state;
+    const { isTfReady, isModelReady, hasPermission, showTensorCamera } = this.state;
 
     if (hasPermission === true) {
-      // Carrega o componente do TensorCamera e permite a visualização câmera
-      return this.renderTensorCamera(textureDims, tensorDims);
+      if (showTensorCamera) {
+        //Carrega o componente do TensorCamera e permite a visualização câmera se showTensor === true
+        return (
+          <View>
+            <Button 
+              title='Stop tracking'
+              style='outline'
+              onPress={() => this.setState({ showTensorCamera: false })}
+              buttonStyle={styles.buttonStyle}
+            />
+            {this.renderTensorCamera(textureDims, tensorDims)}
+          </View>
+        )
+      }
+      else {
+        // Desativa a TensorCamera até que o botão seja pressionado; inicia nesse estado por padrão
+        return (
+          <Button 
+            title='Start tracking'
+            style='outline'
+            onPress={() => this.setState({ showTensorCamera: true })}
+            buttonStyle={styles.buttonStyle}
+          />
+        );
+      }      
     } 
     
     else {
@@ -186,7 +210,6 @@ const styles = StyleSheet.create({
   detectionText: { 
     textAlign: 'center', 
     textAlignVertical: 'center', 
-    marginTop: SCREEN_HEIGHT * .20, 
     fontWeight: 'bold', 
     color: 'blue' 
   },
@@ -195,6 +218,12 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center', 
     fontWeight: 'bold', 
     color: 'blue' 
+  },
+  buttonStyle: {
+    width: SCREEN_WIDTH * .5,
+    height: SCREEN_HEIGHT * .05,
+    marginTop: SCREEN_HEIGHT * .25, 
+    alignSelf: 'center'
   }
 })
 
