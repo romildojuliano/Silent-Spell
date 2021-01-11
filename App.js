@@ -34,7 +34,7 @@ class App extends React.Component {
     hasPermission: null,                // Determina se o usuário concedeu permissão ao acesso das cameras
     type: Camera.Constants.Type.front,  // Define o tipo de câmera padrão que será usada na aplicação
     showTensorCamera: false,            // Define se a câmera será mostrada na tela
-    frameCounter: 0                     // Conta os frames
+    frameCounter: 0
   }
 
   /*
@@ -151,8 +151,8 @@ class App extends React.Component {
   }
 
   render() {
-    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1, width: 1600 };
-    const tensorDims = { width: 152, height: 200 };
+    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1000, width: 1000 };
+    const tensorDims = { width: 192, height: 192 };
 
     const { isTfReady, isModelReady, hasPermission, showTensorCamera } = this.state;
 
@@ -164,8 +164,7 @@ class App extends React.Component {
             <Button 
               title='Stop tracking'
               style='outline'
-              onPressOut={() => this.setState({ showTensorCamera: false })}
-              onPressIn={() => this.setState({ frameCounter: 0 })}
+              onPress={() => this.setState({ showTensorCamera: false })}
               buttonStyle={styles.buttonStyle}
             />
             {this.renderTensorCamera(textureDims, tensorDims)}
