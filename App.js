@@ -1,11 +1,10 @@
 // Módulos do React Native
-import React from 'react'
+import React, { useState } from 'react'
 import { 
   StyleSheet, 
   Text, 
   View, 
-  Dimensions,
-  TouchableOpacity
+  Dimensions
 } from 'react-native'
 import { Button } from 'react-native-elements';
 
@@ -34,7 +33,8 @@ class App extends React.Component {
     isModelReady: false,                // Determina se o modelo do @tensorflow-models/handpose está carregado     
     hasPermission: null,                // Determina se o usuário concedeu permissão ao acesso das cameras
     type: Camera.Constants.Type.front,  // Define o tipo de câmera padrão que será usada na aplicação
-    showTensorCamera: false
+    showTensorCamera: false,            // Define se a câmera será mostrada na tela
+    frameCounter: 0                     // Conta os frames
   }
 
   /*
@@ -69,16 +69,18 @@ class App extends React.Component {
   }
 
   handleCameraStream = (images, updatePreview, gl) => {
-
     console.log(detectGLCapabilities(gl));
-
+     
     const loop = async () => {
+    
       const nextImageTensor = await images.next().value;
       
-      const predictions = await this.model.estimateHands(nextImageTensor);
-
-      // Printa os valores estimados pelo modelo
-      console.log(predictions) 
+      if (this.state.frameCounter % 10 == 0) { 
+        const predictions = await this.model.estimateHands(nextImageTensor);
+        console.log('Dividido!') 
+        console.log(predictions)
+      }
+      
       
       /* 
       Funções utilizadas pelo Tensorflow para atualizar os frames da 
@@ -87,6 +89,9 @@ class App extends React.Component {
       */
       updatePreview();
       gl.endFrameEXP();
+
+      this.setState({ frameCounter: this.state.frameCounter + 1 });
+      console.log(this.state.frameCounter);
 
       // Função que recebe o proóximo frame e retorna ao início do loop
       requestAnimationFrame(loop);
@@ -146,7 +151,7 @@ class App extends React.Component {
   }
 
   render() {
-    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1200, width: 1600 };
+    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1, width: 1600 };
     const tensorDims = { width: 152, height: 200 };
 
     const { isTfReady, isModelReady, hasPermission, showTensorCamera } = this.state;
@@ -159,7 +164,8 @@ class App extends React.Component {
             <Button 
               title='Stop tracking'
               style='outline'
-              onPress={() => this.setState({ showTensorCamera: false })}
+              onPressOut={() => this.setState({ showTensorCamera: false })}
+              onPressIn={() => this.setState({ frameCounter: 0 })}
               buttonStyle={styles.buttonStyle}
             />
             {this.renderTensorCamera(textureDims, tensorDims)}
