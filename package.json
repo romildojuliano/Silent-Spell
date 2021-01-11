@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.1.0",
     "@mediapipe/hands": "^0.1.1606863095",
     "@react-native-async-storage/async-storage": "^1.13.2",
     "@react-native-community/async-storage": "^1.12.1",
@@ -23,6 +24,7 @@
     "expo": "~40.0.0",
     "expo-camera": "~9.1.0",
     "expo-file-system": "~9.3.0",
+    "expo-font": "~8.4.0",
     "expo-gl": "~9.2.0",
     "expo-gl-cpp": "~9.2.0",
     "expo-image-picker": "~9.2.0",
@@ -30,9 +32,11 @@
     "image-pixels": "^2.2.2",
     "jpeg-js": "^0.3.7",
     "lodash": "^4.17.20",
+    "lottie-react-native": "^3.5.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
+    "react-native-animatable": "^1.3.3",
     "react-native-elements": "^3.1.0",
     "react-native-fs": "^1.2.0",
     "react-native-vector-icons": "^7.1.0",
