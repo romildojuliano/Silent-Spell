@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   },
   animatedView: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: Dimensions.get('screen').height * 1.25,
     justifyContent: 'center', 
     //alignContent: 'center', 
     alignItems: 'center',
