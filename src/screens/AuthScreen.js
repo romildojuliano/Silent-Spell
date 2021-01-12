@@ -123,7 +123,7 @@ export default function AuthScreen() {
     }
     else if (flag == 1) {
       return (
-        <View>
+        <View style={styles.absoluteBackground}>
           {LoginForm()}
           {LoginButton()}
           <TouchableOpacity style={styles.createAccountTextContainer}>
@@ -138,6 +138,12 @@ export default function AuthScreen() {
 }
 
 const styles = StyleSheet.create({
+  absoluteBackground: {
+    width: Dimensions.get('screen').width,
+    height: Dimensions.get('screen').height * 1.25,
+    backgroundColor: '#263056',
+    flex: 1
+  },
   createAccountTextContainer: {
     flex: 1, 
     position: 'absolute', 
@@ -190,15 +196,14 @@ const styles = StyleSheet.create({
     color: '#fc9e21',
     textShadowColor: 'rgba(0, 0, 0, 1)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 5,
+    textShadowRadius: 5
   },
   animatedView: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('screen').height * 1.25,
     justifyContent: 'center', 
-    //alignContent: 'center', 
     alignItems: 'center',
-    //alignContent: 'center',
+    flex: 1,
     backgroundColor: '#263056',
     paddingTop: Dimensions.get('window').height * .045
   },
@@ -216,7 +221,7 @@ const styles = StyleSheet.create({
   bottomPageText: {
     fontFamily: 'OpenSans-Bold',
     textAlignVertical: 'bottom',
-    paddingTop: Dimensions.get('window').height * .9,
+    paddingTop: Dimensions.get('window').height * .8,
     color: '#FFFFFF',
     position: 'absolute',
     textShadowColor: 'rgba(0, 0, 0, 1)',
