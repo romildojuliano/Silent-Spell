@@ -43,6 +43,7 @@ const LoginForm = () => {
             Email
           </Text>
           <TextInput 
+            underlineColorAndroid="transparent"
             allowFontScaling
             autoCapitalize='none'
             autoCompleteType='email'
@@ -62,6 +63,7 @@ const LoginForm = () => {
             Senha
           </Text>
           <TextInput 
+            underlineColorAndroid="transparent"
             allowFontScaling
             autoCapitalize='none'
             autoCompleteType='password'
@@ -178,8 +180,8 @@ const styles = StyleSheet.create({
     // Font Related
     fontFamily: 'LakkiReddy-Regular', 
     fontSize: Dimensions.get('window').height * .03,
-    paddingTop: 12,
-    textAlignVertical: 'top',
+    //paddingTop: 12,
+    textAlignVertical: 'bottom',
     color: '#564c26',
   },
   textStyle: {
