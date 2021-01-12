@@ -77,7 +77,6 @@ class App extends React.Component {
       
       if (this.state.frameCounter % 10 == 0) { 
         const predictions = await this.model.estimateHands(nextImageTensor);
-        console.log('Dividido!') 
         console.log(predictions)
       }
       
@@ -151,8 +150,8 @@ class App extends React.Component {
   }
 
   render() {
-    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1000, width: 1000 };
-    const tensorDims = { width: 192, height: 192 };
+    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1400, width: 1400 };
+    const tensorDims = { width: 320, height: 320 };
 
     const { isTfReady, isModelReady, hasPermission, showTensorCamera } = this.state;
 
