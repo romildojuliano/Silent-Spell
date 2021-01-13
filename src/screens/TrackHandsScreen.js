@@ -90,7 +90,6 @@ class TrackHandsScreen extends React.Component {
       gl.endFrameEXP();
 
       this.setState({ frameCounter: this.state.frameCounter + 1 });
-      console.log(this.state.frameCounter);
 
       // Função que recebe o proóximo frame e retorna ao início do loop
       requestAnimationFrame(loop);
