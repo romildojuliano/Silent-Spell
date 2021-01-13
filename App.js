@@ -2,15 +2,18 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import AuthScreen from './src/screens/AuthScreen';
 import TrackHandsScreen from './src/screens/TrackHandsScreen';
+import RegisterSCreen from './src/screens/RegisterScreen';
 
 const navigator = createStackNavigator(
   {
     Auth: AuthScreen,
-    TrackHands: TrackHandsScreen
+    TrackHands: TrackHandsScreen,
+    Register: RegisterSCreen
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'Register',
     headerMode: 'none',
+    mode: Platform.OS === "ios" ? "modal" : "card"
   }
 );
 

@@ -103,13 +103,14 @@ const LoginButton = () => {
   );
 }
 
-export default function AuthScreen() {
+export default function AuthScreen({ navigation }) {
   let [fontsLoaded] = useFonts({
     'LakkiReddy-Regular': require('../../assets/LakkiReddy-Regular.ttf'),
     'OpenSans-Bold': require('../../assets/OpenSans-Bold.ttf'),
   });
 
   const [flag, setFlag] = useState(0);
+  const [isRegister, setRegister] = useState(false);
   
   if (!fontsLoaded) {
     return <></>;
@@ -122,20 +123,21 @@ export default function AuthScreen() {
       return LoadingScreen();
     }
     else if (flag == 1) {
-      return (
-        <View style={styles.absoluteBackground}>
-          {LoginForm()}
-          {LoginButton()}
-          <TouchableOpacity style={styles.createAccountTextContainer}>
-            <Text style={styles.createAccountText}>
-              Não possui uma conta? Clique aqui
-            </Text>
-          </TouchableOpacity>
-        </View>
-      );
+        return (
+          <View style={styles.absoluteBackground}>
+            {LoginForm()}
+            {LoginButton()}
+            <TouchableOpacity style={styles.createAccountTextContainer} onPress={() => navigation.navigate('Register')}>
+              <Text style={styles.createAccountText}>
+                Não possui uma conta? Clique aqui
+              </Text>
+            </TouchableOpacity>
+          </View>
+        );
+      }
     }
-  }
 }
+
 
 const styles = StyleSheet.create({
   absoluteBackground: {
@@ -191,7 +193,7 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     fontFamily: 'LakkiReddy-Regular', 
-    fontSize: 59, 
+    fontSize: Dimensions.get('window').width * .05, 
     textAlign: 'center', 
     color: '#fc9e21',
     textShadowColor: 'rgba(0, 0, 0, 1)',
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     backgroundColor: '#263056',
-    paddingTop: Dimensions.get('window').height * .045
+    paddingTop: Dimensions.get('window').height * .04
   },
   animatableText: {
     textAlign: 'center', 
@@ -221,7 +223,7 @@ const styles = StyleSheet.create({
   bottomPageText: {
     fontFamily: 'OpenSans-Bold',
     textAlignVertical: 'bottom',
-    paddingTop: Dimensions.get('window').height * .8,
+    paddingTop: Dimensions.get('window').height * .9,
     color: '#FFFFFF',
     position: 'absolute',
     textShadowColor: 'rgba(0, 0, 0, 1)',
