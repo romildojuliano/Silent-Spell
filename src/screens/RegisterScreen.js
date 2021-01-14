@@ -1,13 +1,31 @@
 import React from 'react';
 import { useFonts } from 'expo-font';
-import { StyleSheet, Dimensions, View, Text, TextInput } from 'react-native';
+import { StyleSheet, Dimensions, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Button } from 'react-native-elements';
 
+const LoginButton = () => { 
+  return (
+    <TouchableOpacity style={styles.containerButton}>
+      <Button 
+        title='CADASTRAR'
+        buttonStyle={styles.buttonStyle}
+        titleStyle={{ 
+          fontFamily: 'OpenSans-Bold', 
+          fontWeight: 'bold', 
+          textShadowColor: 'rgba(0, 0, 0, 1)',
+          textShadowOffset: { width: 0, height: 1 },
+          textShadowRadius: 1, 
+        }}
+      />
+    </TouchableOpacity>
+  );
+}
 
 const Inputs = () => {
   return (
     <>
       <Text style={styles.textStyle}>Cadastro</Text>
-      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').height * .05 }]}>
+      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .08 }]}>
         Nome de usuário
       </Text>
       <TextInput 
@@ -27,7 +45,7 @@ const Inputs = () => {
       style={styles.inputStyle}
       />
 
-      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').height * .05, paddingTop: Dimensions.get('window').height * .02 }]}>
+      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .08, paddingTop: Dimensions.get('window').height * .0175 }]}>
         Email
       </Text>
       <TextInput 
@@ -47,7 +65,7 @@ const Inputs = () => {
       style={styles.inputStyle}
       />
 
-      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').height * .05, paddingTop: Dimensions.get('window').height * .02 }]}>
+      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .08, paddingTop: Dimensions.get('window').height * .0175 }]}>
         Senha
       </Text>
       <TextInput 
@@ -66,7 +84,7 @@ const Inputs = () => {
       style={styles.inputStyle}
       />
 
-      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .075, paddingTop: Dimensions.get('window').height * .02 }]}>
+      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .078, paddingTop: Dimensions.get('window').height * .03 }]}>
         Digite a senha novamente
       </Text>
       <TextInput 
@@ -84,13 +102,13 @@ const Inputs = () => {
       textContentType='password'
       style={styles.inputStyle}
       />
-
+      {LoginButton()}
     </>
   );
   
 } 
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
     'LakkiReddy-Regular': require('../../assets/LakkiReddy-Regular.ttf'),
     'OpenSans-Bold': require('../../assets/OpenSans-Bold.ttf'),
@@ -101,9 +119,22 @@ const RegisterScreen = () => {
   }
   else {
     return (
-      <View style={styles.absoluteBackground}>
-        
+      <View style={styles.absoluteBackground}>       
         {Inputs()}
+        <TouchableOpacity style={styles.containerButton}>
+          <Button 
+            title='CADASTRAR'
+            buttonStyle={styles.buttonStyle}
+            titleStyle={{ 
+              fontFamily: 'OpenSans-Bold', 
+              fontWeight: 'bold', 
+              textShadowColor: 'rgba(0, 0, 0, 1)',
+              textShadowOffset: { width: 0, height: 1 },
+              textShadowRadius: 1, 
+            }}
+            onPress={() => navigation.navigate('Auth')}
+          />
+        </TouchableOpacity>
       </View>
     );
   }
@@ -136,11 +167,27 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderRadius: 10,
     // Font Related
-    fontFamily: 'OpenSans-Bold', 
+    fontFamily: 'LakkiReddy-Regular', 
     fontSize: Dimensions.get('window').height * .03,
     textAlignVertical: 'bottom',
     color: '#564c26',
     alignSelf: 'center'
+  },
+  containerButton: { 
+    flex: 1, 
+    position: 'absolute', 
+    alignItems: 'center', 
+    alignSelf: 'center', 
+    alignContent: 'center',
+    marginTop: Dimensions.get('window').height * .83,
+  },
+  buttonStyle: {
+    width: Dimensions.get('window').width * .6,
+    height: Dimensions.get('window').height * .075,
+    borderRadius: 30,
+    backgroundColor: '#FF6F61',
+    borderBottomWidth: 2,
+    borderBottomColor: '#000'
   },
 });
 

@@ -11,7 +11,7 @@ const navigator = createStackNavigator(
     Register: RegisterSCreen
   },
   {
-    initialRouteName: 'Register',
+    initialRouteName: 'Auth',
     headerMode: 'none',
     mode: Platform.OS === "ios" ? "modal" : "card"
   }
