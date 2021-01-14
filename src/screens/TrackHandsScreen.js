@@ -1,5 +1,5 @@
 // Módulos do React Native
-import React, { useState } from 'react'
+import React from 'react'
 import { 
   StyleSheet, 
   Text, 
@@ -18,6 +18,12 @@ require('@tensorflow/tfjs-backend-webgl'); // Necessário?
 import { Camera } from 'expo-camera';
 import Constants from 'expo-constants'
 import * as Permissions from 'expo-permissions'
+
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
+
+//configurações do websocket
+const URL = 'ws://192.168.0.108:3000';
+const client = new W3CWebSocket(URL);
 
 // Componente de alta ordem para usar as funções da câmera 
 const TensorCamera = cameraWithTensors(Camera);
@@ -66,10 +72,23 @@ class TrackHandsScreen extends React.Component {
     // Determina se o usuário garantiu permissão de acesso às câmeras ou não
     this.setState({ hasPermission: status === 'granted' });
 
+
+    console.log('chegou aqui?')
+    client.onopen = () => {
+      console.log('WebSocket Client Connected');
+    };
+
+    client.onmessage = (message) => {
+      const dataFromServer = JSON.parse(message.data);
+      console.log('Mensagem: ', dataFromServer);
+    };
+    console.log('e aqui?')
+    
+
   }
 
   handleCameraStream = (images, updatePreview, gl) => {
-    console.log(detectGLCapabilities(gl));
+    //console.log(detectGLCapabilities(gl));
      
     const loop = async () => {
     
@@ -77,7 +96,7 @@ class TrackHandsScreen extends React.Component {
       
       if (this.state.frameCounter % 10 == 0) { 
         const predictions = await this.model.estimateHands(nextImageTensor);
-        console.log(predictions)
+        client.send(JSON.stringify(predictions,2));
       }
       
       
