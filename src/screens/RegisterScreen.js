@@ -2,8 +2,9 @@ import React from 'react';
 import { useFonts } from 'expo-font';
 import { StyleSheet, Dimensions, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-elements';
+import RegisterForm from '../components/RegisterForm';
 
-const LoginButton = () => { 
+const RegisterButton = (navigation) => { 
   return (
     <TouchableOpacity style={styles.containerButton}>
       <Button 
@@ -16,97 +17,11 @@ const LoginButton = () => {
           textShadowOffset: { width: 0, height: 1 },
           textShadowRadius: 1, 
         }}
+        onPress={() => navigation.navigate('Auth')}
       />
     </TouchableOpacity>
   );
 }
-
-const Inputs = () => {
-  return (
-    <>
-      <Text style={styles.textStyle}>Cadastro</Text>
-      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .08 }]}>
-        Nome de usuário
-      </Text>
-      <TextInput 
-      underlineColorAndroid="transparent"
-      allowFontScaling
-      autoCapitalize='none'
-      autoCompleteType='username'
-      autoCorrect={false}
-      caretHidden
-      clearButtonMode='while-editing'
-      keyboardType='ascii-capable'
-      onSubmitEditing={() => {}} // Função realizada ao pressionar buttão 'Enter'
-      returnKeyType='next'
-      selectionColor='purple'
-      textAlign='center'
-      textContentType='username'
-      style={styles.inputStyle}
-      />
-
-      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .08, paddingTop: Dimensions.get('window').height * .0175 }]}>
-        Email
-      </Text>
-      <TextInput 
-      underlineColorAndroid="transparent"
-      allowFontScaling
-      autoCapitalize='none'
-      autoCompleteType='email'
-      autoCorrect={false}
-      caretHidden
-      clearButtonMode='while-editing'
-      keyboardType='email-address'
-      onSubmitEditing={() => {}} // Função realizada ao pressionar buttão 'Enter'
-      returnKeyType='next'
-      selectionColor='purple'
-      textAlign='center'
-      textContentType='emailAddress'
-      style={styles.inputStyle}
-      />
-
-      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .08, paddingTop: Dimensions.get('window').height * .0175 }]}>
-        Senha
-      </Text>
-      <TextInput 
-      underlineColorAndroid="transparent"
-      allowFontScaling
-      autoCapitalize='none'
-      autoCompleteType='password'
-      autoCorrect={false}
-      caretHidden
-      clearButtonMode='while-editing'
-      onSubmitEditing={() => {}} // Função realizada ao pressionar buttão 'Enter'
-      returnKeyType='next'
-      selectionColor='purple'
-      textAlign='center'
-      textContentType='password'
-      style={styles.inputStyle}
-      />
-
-      <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .078, paddingTop: Dimensions.get('window').height * .03 }]}>
-        Digite a senha novamente
-      </Text>
-      <TextInput 
-      underlineColorAndroid="transparent"
-      allowFontScaling
-      autoCapitalize='none'
-      autoCompleteType='password'
-      autoCorrect={false}
-      caretHidden
-      clearButtonMode='while-editing'
-      onSubmitEditing={() => {}} // Função realizada ao pressionar buttão 'Enter'
-      returnKeyType='next'
-      selectionColor='purple'
-      textAlign='center'
-      textContentType='password'
-      style={styles.inputStyle}
-      />
-      {LoginButton()}
-    </>
-  );
-  
-} 
 
 const RegisterScreen = ({ navigation }) => {
   let [fontsLoaded] = useFonts({
@@ -120,21 +35,8 @@ const RegisterScreen = ({ navigation }) => {
   else {
     return (
       <View style={styles.absoluteBackground}>       
-        {Inputs()}
-        <TouchableOpacity style={styles.containerButton}>
-          <Button 
-            title='CADASTRAR'
-            buttonStyle={styles.buttonStyle}
-            titleStyle={{ 
-              fontFamily: 'OpenSans-Bold', 
-              fontWeight: 'bold', 
-              textShadowColor: 'rgba(0, 0, 0, 1)',
-              textShadowOffset: { width: 0, height: 1 },
-              textShadowRadius: 1, 
-            }}
-            onPress={() => navigation.navigate('Auth')}
-          />
-        </TouchableOpacity>
+        <RegisterForm />
+        {RegisterButton(navigation)}
       </View>
     );
   }

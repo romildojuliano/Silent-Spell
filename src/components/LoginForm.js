@@ -2,7 +2,7 @@ import { Text, TextInput, View, KeyboardAvoidingView, StyleSheet, Dimensions } f
 import { useFonts } from 'expo-font';
 import React, { useState } from 'react';
 
-const LoginForm = ({ fonts }) => {
+const LoginForm = () => {
 
   let [fontsLoaded] = useFonts({
     'LakkiReddy-Regular': require('../../assets/LakkiReddy-Regular.ttf'),
@@ -15,6 +15,7 @@ const LoginForm = ({ fonts }) => {
   if (!fontsLoaded) {
     return <></>;
   }
+  
   else {
     return (
       <View style={[styles.absoluteBackground], { paddingTop: Dimensions.get('window').height * .065 }}>
