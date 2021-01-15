@@ -170,8 +170,8 @@ class TrackHandsScreen extends React.Component {
   }
 
   render() {
-    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1200, width: 1600 };
-    const tensorDims = { height: 152, width: 200 };
+    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1400, width: 1400 };
+    const tensorDims = { width: 200, height: 200 };
 
     const { isTfReady, isModelReady, hasPermission, showTensorCamera } = this.state;
 
