@@ -73,7 +73,7 @@ class TrackHandsScreen extends React.Component {
     this.setState({ hasPermission: status === 'granted' });
 
 
-    console.log('chegou aqui?')
+    //console.log('chegou aqui?')
     client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
@@ -82,7 +82,7 @@ class TrackHandsScreen extends React.Component {
       const dataFromServer = JSON.parse(message.data);
       console.log('Mensagem: ', dataFromServer);
     };
-    console.log('e aqui?')
+    //console.log('e aqui?')
     
 
   }
@@ -96,7 +96,7 @@ class TrackHandsScreen extends React.Component {
       
       if (this.state.frameCounter % 10 == 0) { 
         const predictions = await this.model.estimateHands(nextImageTensor);
-        client.send(JSON.stringify(predictions,2));
+        client.send(JSON.stringify(predictions, 2));
       }
       
       

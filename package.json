@@ -33,6 +33,7 @@
     "expo-gl-cpp": "~9.2.0",
     "expo-image-picker": "~9.2.0",
     "expo-status-bar": "~1.0.3",
+    "firebase": "^8.2.3",
     "image-pixels": "^2.2.2",
     "jpeg-js": "^0.3.7",
     "lodash": "^4.17.20",
