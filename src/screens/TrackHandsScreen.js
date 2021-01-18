@@ -63,7 +63,10 @@ class TrackHandsScreen extends React.Component {
     this.setState({ isTfReady: true })
 
     // Altera o estado para indicar que o modelo do Handpose está carregado 
-    this.model = await handpose.load()
+    this.model = await handpose.load({maxContinuousChecks: 2,
+                                      detectionConfidence:0.3,
+                                      iouThreshold: 0.3,
+                                    scoreThreshold:0.75})
     this.setState({ isModelReady: true })
 
     // Solicita permissão do usuário para ter acesso às câmeras
@@ -95,10 +98,10 @@ class TrackHandsScreen extends React.Component {
       const nextImageTensor = await images.next().value;
       
       if (this.state.frameCounter % 10 == 0) { 
+        //console.log(nextImageTensor)
         const predictions = await this.model.estimateHands(nextImageTensor);
-        console.log(predictions);
-        //client.send(JSON.stringify(predictions, 2));
-
+        client.send(JSON.stringify(predictions,2));
+        //client.send(JSON.stringify(nextImageTensor,2));
       }
       
       
@@ -170,7 +173,7 @@ class TrackHandsScreen extends React.Component {
   }
 
   render() {
-    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1400, width: 1400 };
+    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1200, width: 1600 };
     const tensorDims = { width: 200, height: 200 };
 
     const { isTfReady, isModelReady, hasPermission, showTensorCamera } = this.state;
