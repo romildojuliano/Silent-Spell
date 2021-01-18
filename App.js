@@ -1,16 +1,23 @@
-import { createAppContainer } from 'react-navigation';
+import { createAppContainer, Bottom } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { enableScreens } from 'react-native-screens'
+
 import AuthScreen from './src/screens/AuthScreen';
-import TrackHandsScreen from './src/screens/TrackHandsScreen';
 import RegisterSCreen from './src/screens/RegisterScreen';
+import MainScreen from './src/screens/MainScreen';
+import TrackHandsScreen from './src/screens/TrackHandsScreen';
+
 import React from 'react';
 import firebase from 'firebase';
+import { LogBox } from 'react-native';
+
 
 const navigator = createStackNavigator(
   {
     Auth: AuthScreen,
     TrackHands: TrackHandsScreen,
-    Register: RegisterSCreen
+    Register: RegisterSCreen,
+    Main: MainScreen
   },
   {
     initialRouteName: 'Auth',
@@ -22,6 +29,9 @@ const navigator = createStackNavigator(
 const App = createAppContainer(navigator);
 
 export default () => {
+  LogBox.ignoreAllLogs();
+  enableScreens();
+
   // Inicializa o firebase
   if (!firebase.apps.length){
     firebase.initializeApp({
@@ -34,7 +44,7 @@ export default () => {
       appId: "1:1034982706171:web:265a655e70f294885f995e",
       measurementId: "G-N6HML6X587"
     })
-    console.log('App iniciado.')
+    console.log('App iniciado.');
   }
   else {
     firebase.app();

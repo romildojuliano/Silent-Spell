@@ -14,20 +14,24 @@ import LottieView from 'lottie-react-native';
 import { useFonts } from 'expo-font';
 import firebase from 'firebase';
 
-const LoadingScreen = () => {
+const LoadingScreen = () => { 
   return (
-    <View style={[styles.animatedView, { paddingTop: Dimensions.get('window').height * .45 }]}>
-      <Animatable.Text animation='pulse' easing='ease-out' iterationCount='infinite' style={styles.animatableText}>
-        <Text style={[styles.textStyle]}>Silent Spell</Text>
-        <LottieView source={require('../../assets/main_screen_loading.json')} loop autoPlay autoSize={false} style={{ width: 100, height: 100, flex: 1, alignSelf: 'center', paddingBottom: 50, position: 'absolute' }} />
-      </Animatable.Text>
+    <>
+      <View style={[styles.animatedView, { paddingTop: Dimensions.get('window').height * .45 }]}>  
+        <Animatable.Text animation='pulse' easing='ease-out' iterationCount='infinite' style={styles.animatableText}>
+          <Text style={[styles.textStyle]}>Silent Spell</Text>
+          <LottieView source={require('../../assets/main_screen_loading.json')} loop autoPlay autoSize={false} style={{ width: 100, height: 100, flex: 1, alignSelf: 'center', paddingBottom: 50, position: 'absolute' }} />
+        </Animatable.Text>
 
-      <Text style={styles.bottomPageText}>
-        Copyright © 2021 Silent Spell. All Rights Reserved
-      </Text>
-    </View>
+        <Text style={styles.bottomPageText}>
+          Copyright © 2021 Silent Spell. All Rights Reserved
+        </Text>
+      </View>
+    </>
   );
 }
+
+const backToMainScreen = (navigation) => navigation.navigate('Main');
 
 const LoginButton = (email, password, navigation) => { 
   return (
@@ -46,7 +50,7 @@ const LoginButton = (email, password, navigation) => {
           firebase.auth().signInWithEmailAndPassword(email, password)
             .then((user) => {
               console.log(`Login realizado com sucesso por ${user.user.email}`);
-              navigation.navigate('TrackHands');
+              navigation.navigate('Main');
             })
             .catch(err => console.log(err))
         }}
@@ -62,9 +66,20 @@ export default function AuthScreen({ navigation }) {
     'OpenSans-Bold': require('../../assets/OpenSans-Bold.ttf'),
   });
 
+  const [userLoggedIn, setUserLoggedIn] = useState(null);
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      setUserLoggedIn(true);
+    }
+    else {
+      setUserLoggedIn(false);
+    }
+  })
+
   const [flag, setFlag] = useState(0);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('indioviado@gmail.com');
+  const [password, setPassword] = useState('indiochan');
 
   if (!fontsLoaded) {
     return <></>;
@@ -73,76 +88,89 @@ export default function AuthScreen({ navigation }) {
     if (flag == 0) {
       setInterval(() => {
         setFlag(1);
-      }, 7500);
+      }, 5000);
+      
       return LoadingScreen();
+      
     }
     else if (flag == 1) {
-        return (
-          <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          keyboardVerticalOffset={Dimensions.get('window').height * .005}
-          >
-            <View style={styles.absoluteBackground}>
-              <View style={styles.animatedView}>
-                <Text style={styles.textStyle}>
-                  Login
-                </Text>
+      switch(userLoggedIn) {
+        case true:
+          backToMainScreen(navigation);
+      
+        case false: 
+          return (
+            <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            keyboardVerticalOffset={Dimensions.get('window').height * .05}
+            >
+              <View style={styles.absoluteBackground}>
+                <View style={styles.animatedView}>
+                  <Text style={styles.textStyle}>
+                    Login
+                  </Text>
+                  
+                  <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .1 }]}>
+                    Email
+                  </Text>
+                  <TextInput 
+                    underlineColorAndroid="transparent"
+                    allowFontScaling
+                    autoCapitalize='none'
+                    onChangeText={(email) => setEmail(email)}
+                    autoCompleteType='email'
+                    autoCorrect={false}
+                    caretHidden
+                    clearButtonMode='while-editing'
+                    keyboardType='email-address'
+                    value={email}
+                    returnKeyType='done'
+                    selectionColor='purple'
+                    textAlign='center'
+                    textContentType='emailAddress'
+                    style={styles.inputStyle}
+                  />
+
+                  <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .1, paddingTop: Dimensions.get('window').height * .0175 }]}>
+                    Senha
+                  </Text>
+                  <TextInput 
+                    underlineColorAndroid="transparent"
+                    allowFontScaling
+                    autoCapitalize='none'
+                    autoCompleteType='password'
+                    autoCorrect={false}
+                    caretHidden
+                    clearButtonMode='while-editing'
+                    keyboardType='default'
+                    onChangeText={(password) => setPassword(password)}
+                    returnKeyType='go'
+                    selectionColor='purple'
+                    secureTextEntry
+                    textContentType='password'
+                    style={styles.inputStyle}
+                    textAlign='center'
+                    value={password}
+                  />
                 
-                <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .1 }]}>
-                  Email
-                </Text>
-                <TextInput 
-                  underlineColorAndroid="transparent"
-                  allowFontScaling
-                  autoCapitalize='none'
-                  onChangeText={(email) => setEmail(email)}
-                  autoCompleteType='email'
-                  autoCorrect={false}
-                  caretHidden
-                  clearButtonMode='while-editing'
-                  keyboardType='email-address'
-                  value={email}
-                  returnKeyType='done'
-                  selectionColor='purple'
-                  textAlign='center'
-                  textContentType='emailAddress'
-                  style={styles.inputStyle}
-                />
-
-                <Text style={[styles.textStyle, { fontSize: Dimensions.get('window').width * .1, paddingTop: Dimensions.get('window').height * .0175 }]}>
-                  Senha
-                </Text>
-                <TextInput 
-                  underlineColorAndroid="transparent"
-                  allowFontScaling
-                  autoCapitalize='none'
-                  autoCompleteType='password'
-                  autoCorrect={false}
-                  caretHidden
-                  clearButtonMode='while-editing'
-                  keyboardType='default'
-                  onChangeText={(password) => setPassword(password)}
-                  returnKeyType='go'
-                  selectionColor='purple'
-                  secureTextEntry
-                  textContentType='password'
-                  style={styles.inputStyle}
-                  textAlign='center'
-                  value={password}
-                />
-
+                </View>
+                <TouchableOpacity style={styles.createAccountTextContainer} onPress={() => navigation.navigate('Register')}>
+                  <Text style={styles.createAccountText}>
+                    Não possui uma conta? Clique aqui
+                  </Text>
+                </TouchableOpacity>
+                {LoginButton(email, password, navigation)}
                 
               </View>
-              <TouchableOpacity style={styles.createAccountTextContainer} onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.createAccountText}>
-                  Não possui uma conta? Clique aqui
-                </Text>
-              </TouchableOpacity>
-              {LoginButton(email, password, navigation)}
-              
-            </View>
-          </KeyboardAvoidingView>
-        );
+            </KeyboardAvoidingView>
+          );
+
+          default: 
+            return LoadingScreen();
+
+      }
+      
+        
       }
     }
 }

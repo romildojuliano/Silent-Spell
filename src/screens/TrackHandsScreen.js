@@ -12,6 +12,7 @@ import { Button } from 'react-native-elements';
 import * as tf from '@tensorflow/tfjs'
 import { cameraWithTensors, detectGLCapabilities } from '@tensorflow/tfjs-react-native'
 import * as handpose from '@tensorflow-models/handpose'
+
 require('@tensorflow/tfjs-backend-webgl'); // Necessário?
 
 // Módulos do Expo
@@ -72,7 +73,6 @@ class TrackHandsScreen extends React.Component {
     // Determina se o usuário garantiu permissão de acesso às câmeras ou não
     this.setState({ hasPermission: status === 'granted' });
 
-
     //console.log('chegou aqui?')
     client.onopen = () => {
       console.log('WebSocket Client Connected');
@@ -88,7 +88,7 @@ class TrackHandsScreen extends React.Component {
   }
 
   handleCameraStream = (images, updatePreview, gl) => {
-    //console.log(detectGLCapabilities(gl));
+    console.log(detectGLCapabilities(gl));
      
     const loop = async () => {
     
@@ -96,7 +96,9 @@ class TrackHandsScreen extends React.Component {
       
       if (this.state.frameCounter % 10 == 0) { 
         const predictions = await this.model.estimateHands(nextImageTensor);
-        client.send(JSON.stringify(predictions, 2));
+        console.log(predictions);
+        //client.send(JSON.stringify(predictions, 2));
+
       }
       
       
@@ -168,8 +170,8 @@ class TrackHandsScreen extends React.Component {
   }
 
   render() {
-    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1400, width: 1400 };
-    const tensorDims = { width: 320, height: 320 };
+    const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1200, width: 1600 };
+    const tensorDims = { height: 152, width: 200 };
 
     const { isTfReady, isModelReady, hasPermission, showTensorCamera } = this.state;
 
