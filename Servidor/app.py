@@ -28,6 +28,8 @@ async def server(websocket, path):
     bigy = 0
     smallx = 0
     smally = 0'''
+    blank_image = np.zeros((200,200,3), np.uint8)
+    cv2.imshow('MediaPipe Hands', blank_image)
     try:
         async for message in websocket:
             #print("that was the message")
@@ -76,9 +78,9 @@ async def server(websocket, path):
                 inputPoints = pd.DataFrame([points],columns=['WRIST.x', 'WRIST.y', 'WRIST.z', 'THUMB_CMC.x', 'THUMB_CMC.y', 'THUMB_CMC.z', 'THUMB_MCP.x', 'THUMB_MCP.y', 'THUMB_MCP.z', 'THUMB_IP.x', 'THUMB_IP.y', 'THUMB_IP.z', 'THUMB_TIP.x', 'THUMB_TIP.y', 'THUMB_TIP.z', 'INDEX_FINGER_MCP.x', 'INDEX_FINGER_MCP.y', 'INDEX_FINGER_MCP.z', 'INDEX_FINGER_PIP.x', 'INDEX_FINGER_PIP.y', 'INDEX_FINGER_PIP.z', 'INDEX_FINGER_DIP.x', 'INDEX_FINGER_DIP.y', 'INDEX_FINGER_DIP.z', 'INDEX_FINGER_TIP.x', 'INDEX_FINGER_TIP.y', 'INDEX_FINGER_TIP.z', 'MIDDLE_FINGER_MCP.x', 'MIDDLE_FINGER_MCP.y', 'MIDDLE_FINGER_MCP.z', 'MIDDLE_FINGER_PIP.x', 'MIDDLE_FINGER_PIP.y', 'MIDDLE_FINGER_PIP.z', 'MIDDLE_FINGER_DIP.x', 'MIDDLE_FINGER_DIP.y', 'MIDDLE_FINGER_DIP.z', 'MIDDLE_FINGER_TIP.x', 'MIDDLE_FINGER_TIP.y', 'MIDDLE_FINGER_TIP.z', 'RING_FINGER_MCP.x', 'RING_FINGER_MCP.y', 'RING_FINGER_MCP.z', 'RING_FINGER_PIP.x', 'RING_FINGER_PIP.y', 'RING_FINGER_PIP.z', 'RING_FINGER_DIP.x', 'RING_FINGER_DIP.y', 'RING_FINGER_DIP.z', 'RING_FINGER_TIP.x', 'RING_FINGER_TIP.y', 'RING_FINGER_TIP.z', 'PINKY_MCP.x', 'PINKY_MCP.y', 'PINKY_MCP.z', 'PINKY_PIP.x', 'PINKY_PIP.y', 'PINKY_PIP.z', 'PINKY_DIP.x', 'PINKY_DIP.y', 'PINKY_DIP.z', 'PINKY_TIPPINKY_TIP.x', 'PINKY_TIPPINKY_TIP.y', 'PINKY_TIPPINKY_TIP.z'])
                 pred,pred_idx,probs = learn_inf.predict(inputPoints.iloc[0])
                 print(vocab[pred_idx])
-                #for client in clients:
-                    # if client != websocket:
-                #    await client.send(json.dumps(data))
+                for client in clients:
+                    #if client != websocket:
+                    await client.send(vocab[pred_idx])
     finally:
         # Unregister.
         clients.remove(websocket)

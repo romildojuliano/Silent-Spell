@@ -6,7 +6,6 @@ import {
   View, 
   Dimensions
 } from 'react-native'
-import { Button } from 'react-native-elements';
 
 // Módulos do Tensorflow.js
 import * as tf from '@tensorflow/tfjs'
@@ -21,6 +20,8 @@ import Constants from 'expo-constants'
 import * as Permissions from 'expo-permissions'
 
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
+
+import CheckUp from '../components/CheckUp'
 
 //configurações do websocket
 const URL = 'ws://192.168.0.108:3000';
@@ -40,7 +41,6 @@ class TrackHandsScreen extends React.Component {
     isModelReady: false,                // Determina se o modelo do @tensorflow-models/handpose está carregado     
     hasPermission: null,                // Determina se o usuário concedeu permissão ao acesso das cameras
     type: Camera.Constants.Type.front,  // Define o tipo de câmera padrão que será usada na aplicação
-    showTensorCamera: false,            // Define se a câmera será mostrada na tela
     frameCounter: 0
   }
 
@@ -76,16 +76,15 @@ class TrackHandsScreen extends React.Component {
     // Determina se o usuário garantiu permissão de acesso às câmeras ou não
     this.setState({ hasPermission: status === 'granted' });
 
-    //console.log('chegou aqui?')
+
     client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
 
     client.onmessage = (message) => {
-      const dataFromServer = JSON.parse(message.data);
+      const dataFromServer = message.data;
       console.log('Mensagem: ', dataFromServer);
     };
-    //console.log('e aqui?')
     
 
   }
@@ -146,29 +145,7 @@ class TrackHandsScreen extends React.Component {
 
   loadingScreen(isTfReady, isModelReady, hasPermission) {
     return (
-        <View style={{ marginTop: SCREEN_HEIGHT * .5 }}>
-          { 
-            (isTfReady) ? 
-            <Text style={styles.loaded}>TensorFlow module loaded</Text>
-            :
-            <Text style={styles.notLoaded}>Loading TensorFlow module...</Text>
-          }
-
-          { 
-            (isModelReady) ? 
-            <Text style={styles.loaded}>@mediapipe/handpose loaded</Text>
-            :
-            <Text style={styles.notLoaded}>Loading @mediapipe/handpose model...</Text>
-          }
-
-          { 
-            (hasPermission) ? 
-            <Text style={styles.loaded}>Permissions granted</Text>
-            :
-            <Text style={styles.notLoaded}>Waiting for permissions...</Text>
-          }
-          
-        </View>
+        <CheckUp isTfReady={isTfReady} isModelReady={isModelReady} hasPermission={hasPermission}/>
     );
   }
 
@@ -176,37 +153,19 @@ class TrackHandsScreen extends React.Component {
     const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1200, width: 1600 };
     const tensorDims = { width: 200, height: 200 };
 
-    const { isTfReady, isModelReady, hasPermission, showTensorCamera } = this.state;
+    const { isTfReady, isModelReady, hasPermission } = this.state;
 
     if (hasPermission === true) {
-      if (showTensorCamera) {
+      
         //Carrega o componente do TensorCamera e permite a visualização câmera se showTensor === true
         return (
           <View>
-            <Button 
-              title='Stop tracking'
-              style='outline'
-              onPress={() => this.setState({ showTensorCamera: false })}
-              buttonStyle={styles.buttonStyle}
-            />
             {this.renderTensorCamera(textureDims, tensorDims)}
           </View>
-        )
-      }
-      else {
-        // Desativa a TensorCamera até que o botão seja pressionado; inicia nesse estado por padrão
-        return (
-          <Button 
-            title='Start tracking'
-            style='outline'
-            onPress={() => this.setState({ showTensorCamera: true })}
-            buttonStyle={styles.buttonStyle}
-          />
         );
-      }      
-    } 
-    
-    else {
+      
+           
+    } else {
       // Tela de carregamento inicial
       return this.loadingScreen(isTfReady, isModelReady, hasPermission);
     }
@@ -224,33 +183,12 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center'
   },
-  loaded: {
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    color: 'green'
-  },
-  notLoaded: {
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    color: 'red'
-  },
   detectionText: { 
+    marginTop: SCREEN_HEIGHT * .25,
     textAlign: 'center', 
     textAlignVertical: 'center', 
     fontWeight: 'bold', 
     color: 'blue' 
-  },
-  fluffyDetected: {
-    textAlign: 'center', 
-    textAlignVertical: 'center', 
-    fontWeight: 'bold', 
-    color: 'blue' 
-  },
-  buttonStyle: {
-    width: SCREEN_WIDTH * .5,
-    height: SCREEN_HEIGHT * .05,
-    marginTop: SCREEN_HEIGHT * .25, 
-    alignSelf: 'center'
   }
 })
 
