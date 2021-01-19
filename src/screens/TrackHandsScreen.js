@@ -117,38 +117,79 @@ class TrackHandsScreen extends React.Component {
 
   }
 
-  addingNewDrop = () => {
+  processingDrop = () => {
+    var vectorAs = [];
+    for(var a of this.state.as){
+      vectorAs.push([a[0],a[1]+1])
+    }
+    var vectorBs = [];
+    for(var b of this.state.bs){
+      vectorBs.push([b[0],b[1]+1])
+    }
+    var vectorCs = [];
+    for(var c of this.state.cs){
+      vectorCs.push([c[0],c[1]+1])
+    }
+    var vectorDs = [];
+    for(var d of this.state.ds){
+      vectorDs.push([d[0],d[1]+1])
+    }
+    var vectorEs = [];
+    for(var e of this.state.es){
+      vectorEs.push([e[0],e[1]+1])
+    }
+    var vectorIs = [];
+    for(var i of this.state.is){
+      vectorIs.push([i[0],i[1]+1])
+    }
+    var vectorLs = [];
+    for(var l of this.state.ls){
+      vectorLs.push([l[0],l[1]+1])
+    }
+    var vectorUs = [];
+    for(var u of this.state.us){
+      vectorUs.push([u[0],u[1]+1])
+    }
+    var vectorWs = [];
+    for(var w of this.state.ws){
+      vectorWs.push([w[0],w[1]+1])
+    }
+   
+
+    //console.log(vectorAs)
+    //console.log(SCREEN_HEIGHT, SCREEN_WIDTH)
     const choosen = Math.floor(Math.random()*9-1)
     switch(choosen){
       case 0:
-        this.setState({as:[...this.state.as, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorAs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
       case 1:
-        this.setState({bs:[...this.state.bs, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorBs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
       case 2:
-        this.setState({cs:[...this.state.cs, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorCs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
       case 3:
-        this.setState({ds:[...this.state.ds, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorDs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
       case 4:
-        this.setState({es:[...this.state.es, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorEs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
       case 5:
-        this.setState({is:[...this.state.is, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorIs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
       case 6:
-        this.setState({ls:[...this.state.ls, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorLs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
       case 7:
-        this.setState({us:[...this.state.us, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorUs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
       case 8:
-        this.setState({ws:[...this.state.ws, [Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT]]})
+        vectorWs.push([Math.random() * SCREEN_WIDTH, SCREEN_HEIGHT])
       break;
+
     }
-    
+    this.setState({as:vectorAs, bs:vectorBs, cs:vectorCs, ds:vectorDs, es:vectorEs, is:vectorIs, ls:vectorLs, us:vectorUs, ws:vectorWs})
   }
 
   handleCameraStream = (images, updatePreview, gl) => {
@@ -163,7 +204,7 @@ class TrackHandsScreen extends React.Component {
         const predictions = await this.model.estimateHands(nextImageTensor);
         client.send(JSON.stringify(predictions,2));
         //client.send(JSON.stringify(nextImageTensor,2));
-        this.addingNewDrop()
+        this.processingDrop()
         
       }
       
