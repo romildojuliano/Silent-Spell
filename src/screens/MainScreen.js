@@ -64,6 +64,13 @@ const MainScreen = ({ navigation }) => {
         />
         {animationFlag ? burstAnimation() : null}
       </TouchableOpacity>
+      <Button 
+            title='go to TrackHands' 
+            buttonStyle={styles.logOutButton}
+            onPress={() => {
+              navigation.navigate('TrackHands')
+            }}
+        />
     </View>
   );
 }
