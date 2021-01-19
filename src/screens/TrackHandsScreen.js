@@ -41,7 +41,11 @@ class TrackHandsScreen extends React.Component {
     isModelReady: false,                // Determina se o modelo do @tensorflow-models/handpose está carregado     
     hasPermission: null,                // Determina se o usuário concedeu permissão ao acesso das cameras
     type: Camera.Constants.Type.front,  // Define o tipo de câmera padrão que será usada na aplicação
-    frameCounter: 0
+    frameCounter: 0,
+    as: [],
+    bs: [],
+    cs: [],
+    ds: []
   }
 
   /*
@@ -84,6 +88,15 @@ class TrackHandsScreen extends React.Component {
     client.onmessage = (message) => {
       const dataFromServer = message.data;
       console.log('Mensagem: ', dataFromServer);
+      if(dataFromServer == 'A'){
+        this.setState({as:[]})
+      }else if (dataFromServer == 'B'){
+        this.setState({bs:[]})
+      }else if (dataFromServer == 'C'){
+        this.setState({cs:[]})
+      }else if (dataFromServer == 'D'){
+        this.setState({ds:[]})
+      }
     };
     
 
@@ -101,6 +114,7 @@ class TrackHandsScreen extends React.Component {
         const predictions = await this.model.estimateHands(nextImageTensor);
         client.send(JSON.stringify(predictions,2));
         //client.send(JSON.stringify(nextImageTensor,2));
+        this.setState({as:[...this.state.as, Math.random() * SCREEN_WIDTH]})
       }
       
       
@@ -153,7 +167,7 @@ class TrackHandsScreen extends React.Component {
     const textureDims = (Platform.OS === 'ios') ? { height: 1920, width: 1080} : { height: 1200, width: 1600 };
     const tensorDims = { width: 200, height: 200 };
 
-    const { isTfReady, isModelReady, hasPermission } = this.state;
+    const { isTfReady, isModelReady, hasPermission, as, bs, cs, ds } = this.state;
 
     if (hasPermission === true) {
       
@@ -161,6 +175,10 @@ class TrackHandsScreen extends React.Component {
         return (
           <View>
             {this.renderTensorCamera(textureDims, tensorDims)}
+            <Text>{as.length}</Text>
+            <Text>{bs.length}</Text>
+            <Text>{cs.length}</Text>
+            <Text>{ds.length}</Text>
           </View>
         );
       
