@@ -36,25 +36,25 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 class TrackHandsScreen extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isTfReady: false, // Determina se o módulo do TensorFlow está carregado
+      isModelReady: false, // Determina se o modelo do @tensorflow-models/handpose está carregado
+      hasPermission: null, // Determina se o usuário concedeu permissão ao acesso das cameras
+      type: Camera.Constants.Type.front, // Define o tipo de câmera padrão que será usada na aplicação
+      frameCounter: 0,
+      as: [],
+      bs: [],
+      cs: [],
+      ds: [],
+      es: [],
+      is: [],
+      ls: [],
+      us: [],
+      ws: [],
+      drops: [],
+      hp: 5,
+    };
   }
-
-  state = {
-    isTfReady: false, // Determina se o módulo do TensorFlow está carregado
-    isModelReady: false, // Determina se o modelo do @tensorflow-models/handpose está carregado
-    hasPermission: null, // Determina se o usuário concedeu permissão ao acesso das cameras
-    type: Camera.Constants.Type.front, // Define o tipo de câmera padrão que será usada na aplicação
-    frameCounter: 0,
-    as: [],
-    bs: [],
-    cs: [],
-    ds: [],
-    es: [],
-    is: [],
-    ls: [],
-    us: [],
-    ws: [],
-    drops: [],
-  };
 
   /*
   Solicita o acesso à câmera de forma assícrona;
@@ -119,6 +119,22 @@ class TrackHandsScreen extends React.Component {
     };
   }
 
+  damageCondition = (letra) => {
+    console.log(letra);
+    if (letra.length > 0) {
+      if (letra[0][1] > SCREEN_HEIGHT) {
+        letra.splice(0, 1);
+        this.setState({
+          hp: this.state.hp - 1,
+        });
+        if (this.state.hp == 0) {
+          return true;
+        }
+      }
+    }
+    // return letra;
+  };
+
   processingDrop = () => {
     var drops = [];
     var vectorAs = [];
@@ -169,7 +185,7 @@ class TrackHandsScreen extends React.Component {
 
     //console.log(vectorAs)
     //console.log(SCREEN_HEIGHT, SCREEN_WIDTH)
-    const choosen = Math.floor(Math.random() * 9 - 1);
+    const choosen = Math.floor(Math.random() * 10 - 1);
     switch (choosen) {
       case 0:
         vectorAs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
@@ -199,18 +215,57 @@ class TrackHandsScreen extends React.Component {
         vectorWs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
         break;
     }
-    this.setState({
-      as: vectorAs,
-      bs: vectorBs,
-      cs: vectorCs,
-      ds: vectorDs,
-      es: vectorEs,
-      is: vectorIs,
-      ls: vectorLs,
-      us: vectorUs,
-      ws: vectorWs,
-      drops: drops,
-    });
+
+    // this.damageCondition(vectorAs);
+    // this.damageCondition(vectorBs);
+    // this.damageCondition(vectorCs);
+    // this.damageCondition(vectorDs);
+    // this.damageCondition(vectorEs);
+    // this.damageCondition(vectorIs);
+    // this.damageCondition(vectorLs);
+    // this.damageCondition(vectorUs);
+    // this.damageCondition(vectorWs);
+
+    if (
+      this.damageCondition(vectorAs) ||
+      this.damageCondition(vectorBs) ||
+      this.damageCondition(vectorCs) ||
+      this.damageCondition(vectorDs) ||
+      this.damageCondition(vectorEs) ||
+      this.damageCondition(vectorIs) ||
+      this.damageCondition(vectorLs) ||
+      this.damageCondition(vectorUs) ||
+      this.damageCondition(vectorWs)
+    ) {
+      this.setState({
+        as: [],
+        bs: [],
+        cs: [],
+        ds: [],
+        es: [],
+        is: [],
+        ls: [],
+        us: [],
+        ws: [],
+        drops: [],
+        hp: 5,
+      });
+
+      this.props.navigation.navigate('Main');
+    } else {
+      this.setState({
+        as: vectorAs,
+        bs: vectorBs,
+        cs: vectorCs,
+        ds: vectorDs,
+        es: vectorEs,
+        is: vectorIs,
+        ls: vectorLs,
+        us: vectorUs,
+        ws: vectorWs,
+        drops: drops,
+      });
+    }
   };
 
   handleCameraStream = (images, updatePreview, gl) => {
@@ -232,8 +287,8 @@ class TrackHandsScreen extends React.Component {
       câmera na tela do celular. O UpdatePreview atualiza o frame,
       enquanto que o gl.endFrameEXP procoessa o próximo frame.
       */
-      updatePreview();
-      gl.endFrameEXP();
+      // updatePreview();
+      // gl.endFrameEXP();
 
       this.setState({ frameCounter: this.state.frameCounter + 1 });
 
@@ -296,6 +351,8 @@ class TrackHandsScreen extends React.Component {
       ls,
       us,
       ws,
+      drops,
+      hp,
     } = this.state;
 
     if (hasPermission === true) {
@@ -303,7 +360,8 @@ class TrackHandsScreen extends React.Component {
       return (
         <View>
           {this.renderTensorCamera(textureDims, tensorDims)}
-          {this.state.drops}
+          {drops}
+          <Text>{hp}</Text>
           <Text>{as.length}</Text>
           <Text>{bs.length}</Text>
           <Text>{cs.length}</Text>
@@ -324,8 +382,8 @@ class TrackHandsScreen extends React.Component {
 
 const styles = StyleSheet.create({
   tfCameraView: {
-    width: SCREEN_WIDTH * 0.75,
-    height: SCREEN_HEIGHT * 0.5,
+    width: 1,
+    height: 1,
     zIndex: 1,
     borderWidth: 0,
     borderRadius: 0,
