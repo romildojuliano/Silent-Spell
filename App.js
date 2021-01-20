@@ -1,28 +1,31 @@
 import { createAppContainer, Bottom } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import { enableScreens } from 'react-native-screens'
+import { enableScreens } from 'react-native-screens';
 
 import AuthScreen from './src/screens/AuthScreen';
 import RegisterSCreen from './src/screens/RegisterScreen';
 import MainScreen from './src/screens/MainScreen';
 import TrackHandsScreen from './src/screens/TrackHandsScreen';
+import Teste from './src/screens/Teste';
+import Drop from './src/screens/Drop';
 
 import React from 'react';
 import firebase from 'firebase';
 import { LogBox } from 'react-native';
-
 
 const navigator = createStackNavigator(
   {
     Auth: AuthScreen,
     TrackHands: TrackHandsScreen,
     Register: RegisterSCreen,
-    Main: MainScreen
+    Main: MainScreen,
+    Teste: Teste,
+    Drop: Drop,
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'TrackHands',
     headerMode: 'none',
-    mode: Platform.OS === "ios" ? "modal" : "card"
+    mode: Platform.OS === 'ios' ? 'modal' : 'card',
   }
 );
 
@@ -33,25 +36,21 @@ export default () => {
   enableScreens();
 
   // Inicializa o firebase
-  if (!firebase.apps.length){
+  if (!firebase.apps.length) {
     firebase.initializeApp({
-      apiKey: "AIzaSyAbVdnJ6ibh_BZTd9x3s_6xd3iy4ZKSimg",
-      authDomain: "silent-spell.firebaseapp.com",
-      databaseURL: "https://silent-spell-default-rtdb.firebaseio.com",
-      projectId: "silent-spell",
-      storageBucket: "silent-spell.appspot.com",
-      messagingSenderId: "1034982706171",
-      appId: "1:1034982706171:web:265a655e70f294885f995e",
-      measurementId: "G-N6HML6X587"
-    })
+      apiKey: 'AIzaSyAbVdnJ6ibh_BZTd9x3s_6xd3iy4ZKSimg',
+      authDomain: 'silent-spell.firebaseapp.com',
+      databaseURL: 'https://silent-spell-default-rtdb.firebaseio.com',
+      projectId: 'silent-spell',
+      storageBucket: 'silent-spell.appspot.com',
+      messagingSenderId: '1034982706171',
+      appId: '1:1034982706171:web:265a655e70f294885f995e',
+      measurementId: 'G-N6HML6X587',
+    });
     console.log('App iniciado.');
-  }
-  else {
+  } else {
     firebase.app();
     console.log('App iniciado.');
   }
-  return (
-    <App />
-  )
-  
-}
+  return <App />;
+};

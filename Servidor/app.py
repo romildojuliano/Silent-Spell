@@ -3,9 +3,16 @@ import websockets
 import json
 import os
 import cv2
+import pathlib
+import platform
 
 from fastai.tabular.all import *
 import math
+
+if platform.system() == 'Windows':
+    print('Windows')
+    temp = pathlib.PosixPath
+    pathlib.PosixPath = pathlib.WindowsPath
 
 path = Path()
 path.ls(file_exts='.pkl')
@@ -86,7 +93,7 @@ async def server(websocket, path):
         clients.remove(websocket)
     
 
-start_server = websockets.serve(server, "192.168.0.108", PORT)
+start_server = websockets.serve(server, "192.168.0.115", PORT)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
