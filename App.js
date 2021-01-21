@@ -6,6 +6,8 @@ import AuthScreen from './src/screens/AuthScreen';
 import RegisterSCreen from './src/screens/RegisterScreen';
 import MainScreen from './src/screens/MainScreen';
 import TrackHandsScreen from './src/screens/TrackHandsScreen';
+import ConfigScreen from './src/screens/ConfigScreen';
+
 import React from 'react';
 import firebase from 'firebase';
 import { LogBox } from 'react-native';
@@ -16,9 +18,10 @@ const navigator = createStackNavigator(
     TrackHands: TrackHandsScreen,
     Register: RegisterSCreen,
     Main: MainScreen,
+    Config: ConfigScreen
   },
   {
-    initialRouteName: 'TrackHands',
+    initialRouteName: 'Auth',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
   }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { Ionicons } from 'react-native-vector-icons';
 import { Button } from 'react-native-elements';
 import LottieView from 'lottie-react-native';
 import firebase from 'firebase';
@@ -32,55 +33,108 @@ const animationTimers = {
   // poison: 1000
 }
 
+const animationRef = () => {
+  return (
+    <TouchableOpacity style={styles.containerButton}>
+      <Button 
+          title='Animation' 
+          titleStyle={styles.titleStyle}
+          buttonStyle={styles.ButtonStd}
+          onPress={() => {
+            setAnimation(true);
+            setTimeout(() => {
+              setAnimation(false);
+            }, animationTimers.burst);
+          }}
+      />
+      {animationFlag ? burstAnimation() : null}
+    </TouchableOpacity>
+  );
+}
+
 const MainScreen = ({ navigation }) => {
   const [animationFlag, setAnimation] = useState(false);
 
   return (
-    <View>
-      <Text style={{ paddingTop: 50, textAlign: 'center', fontSize: 30 }}> 
-        Main Screen
-      </Text>
-      <TouchableOpacity>
+    <View style={styles.absoluteBackground}>
+      
+      <TouchableOpacity style={styles.containerButton}>
         <Button 
-          title='Logout' 
-          buttonStyle={styles.logOutButton}
+            title='INICIAR ' 
+            titleStyle={styles.titleStyle}
+            buttonStyle={styles.ButtonStd}
+            icon={
+              <Ionicons name='ios-game-controller' size={Dimensions.get('window').height * .03} color='white'/>
+            }
+            iconRight
+            onPress={() => {
+              navigation.navigate('TrackHands')
+            }}
+        />
+      </TouchableOpacity>
+      
+      <TouchableOpacity style={styles.containerButton}>
+        <Button 
+          title='CONFIGURAÇÕES ' 
+          icon={
+              <Ionicons name='ios-settings' size={Dimensions.get('window').height * .03} color='white'/>
+            }
+          iconRight
+          onPress={() => navigation.navigate('Config')}
+          titleStyle={styles.titleStyle}
+          buttonStyle={styles.ButtonStd}
+        />
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.containerButton}>
+        <Button 
+          title='SAIR DO JOGO ' 
+          titleStyle={styles.titleStyle}
+          buttonStyle={styles.ButtonStd}
+          icon={
+            <Ionicons name='ios-exit' size={Dimensions.get('window').height * .03} color='white'/>
+          }
+          iconRight
           onPress={() => {
             firebase.auth().signOut();
             navigation.navigate('Auth');
           }} 
         />
       </TouchableOpacity>
-      
-      <TouchableOpacity>
-        <Button 
-            title='Animation' 
-            buttonStyle={styles.logOutButton}
-            onPress={() => {
-              setAnimation(true);
-              setTimeout(() => {
-                setAnimation(false);
-              }, animationTimers.burst);
-            }}
-        />
-        {animationFlag ? burstAnimation() : null}
-      </TouchableOpacity>
-      <Button 
-            title='go to TrackHands' 
-            buttonStyle={styles.logOutButton}
-            onPress={() => {
-              navigation.navigate('TrackHands')
-            }}
-        />
+
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  logOutButton: { 
-    width: 200, 
-    height: 50, 
+  ButtonStd: { 
     alignSelf: 'center', 
-    marginTop: 30 
+    borderRadius: 30,
+    backgroundColor: '#FF6F61',
+    borderBottomWidth: 2,
+    borderBottomColor: '#000',
+    fontWeight: 'bold',
+    width: Dimensions.get('window').width * .6,
+    height: Dimensions.get('window').height * .1
+  },
+  absoluteBackground: {
+    width: Dimensions.get('screen').width,
+    height: Dimensions.get('screen').height * 1.25,
+    backgroundColor: '#263056',
+    alignItems: 'center',
+    paddingTop: Dimensions.get('screen').height * .225
+  },
+  containerButton: { 
+    marginTop: Dimensions.get('window').height * .05,
+  },
+  titleStyle: {
+    fontFamily: 'OpenSans-Bold', 
+    fontWeight: 'bold', 
+    //textShadowColor: 'rgba(0, 0, 0, 1)',
+    //textShadowOffset: { width: 0, height: 1 },
+    //textShadowRadius: 1,
+    fontSize: Dimensions.get('window').fontScale * 18.5
   }
 });
 

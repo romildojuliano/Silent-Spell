@@ -1,6 +1,7 @@
 // Módulos do React Native
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ImageBackground } from 'react-native';
+import LottieView from 'lottie-react-native'
 
 // Módulos do Tensorflow.js
 import * as tf from '@tensorflow/tfjs';
@@ -186,33 +187,35 @@ class TrackHandsScreen extends React.Component {
     //console.log(vectorAs)
     //console.log(SCREEN_HEIGHT, SCREEN_WIDTH)
     const choosen = Math.floor(Math.random() * 10 - 1);
+    const RATE_FACTOR_LEFT = Dimensions.get('window').width * .0425;
+    const RATE_FACTOR = Dimensions.get('window').width * .225;
     switch (choosen) {
       case 0:
-        vectorAs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorAs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
       case 1:
-        vectorBs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorBs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
       case 2:
-        vectorCs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorCs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
       case 3:
-        vectorDs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorDs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
       case 4:
-        vectorEs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorEs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
       case 5:
-        vectorIs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorIs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
       case 6:
-        vectorLs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorLs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
       case 7:
-        vectorUs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorUs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
       case 8:
-        vectorWs.push([30 + Math.random() * (SCREEN_WIDTH - 30), 0]);
+        vectorWs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
         break;
     }
 
@@ -301,9 +304,7 @@ class TrackHandsScreen extends React.Component {
   renderTensorCamera(textureDims, tensorDims) {
     return (
       <View>
-        <Text style={styles.detectionText}>
-          Estimating hands. Check log at the console.
-        </Text>
+        {false ? <Text style={styles.detectionText}>Estimating hands. Check log at the console.</Text> : null}
         <TensorCamera
           // Standard Camera props
           style={styles.tfCameraView}
@@ -331,6 +332,12 @@ class TrackHandsScreen extends React.Component {
     );
   }
 
+  renderHP = (hp) => {
+    return (
+      <LottieView source={require('../../assets/4894-heart.json')} loop autoplay autosize={false} style={{ width: 100, height: 100 }}/>
+    )
+  } 
+
   render() {
     const textureDims =
       Platform.OS === 'ios'
@@ -342,35 +349,16 @@ class TrackHandsScreen extends React.Component {
       isTfReady,
       isModelReady,
       hasPermission,
-      as,
-      bs,
-      cs,
-      ds,
-      es,
-      is,
-      ls,
-      us,
-      ws,
       drops,
-      hp,
+      hp
     } = this.state;
 
     if (hasPermission === true) {
       //Carrega o componente do TensorCamera e permite a visualização câmera se showTensor === true
       return (
-        <View>
+        <View style={styles.absoluteBackground}>
           {this.renderTensorCamera(textureDims, tensorDims)}
           {drops}
-          <Text>{hp}</Text>
-          <Text>{as.length}</Text>
-          <Text>{bs.length}</Text>
-          <Text>{cs.length}</Text>
-          <Text>{ds.length}</Text>
-          <Text>{es.length}</Text>
-          <Text>{is.length}</Text>
-          <Text>{ls.length}</Text>
-          <Text>{us.length}</Text>
-          <Text>{ws.length}</Text>
         </View>
       );
     } else {
@@ -397,6 +385,11 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontWeight: 'bold',
     color: 'blue',
+  },
+  absoluteBackground: {
+    width: Dimensions.get('screen').width,
+    height: Dimensions.get('screen').height * 1.25,
+    backgroundColor: '#263056',
   },
 });
 

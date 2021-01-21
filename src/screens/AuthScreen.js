@@ -31,7 +31,7 @@ const LoadingScreen = () => {
   );
 }
 
-const backToMainScreen = (navigation) => navigation.navigate('Main');
+const gotoMainScreen = (navigation) => navigation.navigate('Main');
 
 const LoginButton = (email, password, navigation) => { 
   return (
@@ -67,19 +67,20 @@ export default function AuthScreen({ navigation }) {
   });
 
   const [userLoggedIn, setUserLoggedIn] = useState(null);
+  const [flag, setFlag] = useState(0);
+  const [email, setEmail] = useState('testuser@test.com');
+  const [password, setPassword] = useState('123456');
+
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       setUserLoggedIn(true);
+      setFlag(1);
     }
     else {
       setUserLoggedIn(false);
     }
   })
-
-  const [flag, setFlag] = useState(0);
-  const [email, setEmail] = useState('indioviado@gmail.com');
-  const [password, setPassword] = useState('indiochan');
 
   if (!fontsLoaded) {
     return <></>;
@@ -96,7 +97,7 @@ export default function AuthScreen({ navigation }) {
     else if (flag == 1) {
       switch(userLoggedIn) {
         case true:
-          backToMainScreen(navigation);
+          gotoMainScreen(navigation);
       
         case false: 
           return (
