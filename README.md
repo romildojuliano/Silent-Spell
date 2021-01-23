@@ -10,8 +10,10 @@
 ## Instalação
 No terminal, digite:
 
-`git clone `
+`git clone https://github.com/romildojuliano/Silent-Spell.git`
 
-`npm install`
+`cd Silent-Spell`
 
-`expo starT`
+Na mesma pasta, instale os dependências com o comando `npm install`
+
+Para inicializar o projeto, digite`expo starT`
