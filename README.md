@@ -6,3 +6,10 @@
  José Douglas
  
  João Victor
+
+## Instalação
+No terminal, digite:
+`git clone
+ npm install
+ expo start
+`
