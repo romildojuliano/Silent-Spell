@@ -16,4 +16,4 @@ No terminal, digite:
 
 Na mesma pasta, instale os dependências com o comando `npm install`
 
-Para inicializar o projeto, digite `expo starT`
+Para inicializar o projeto, digite `expo start`
