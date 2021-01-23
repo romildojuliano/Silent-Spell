@@ -9,7 +9,6 @@
 
 ## Instalação
 No terminal, digite:
-`git clone
- npm install
- expo start
-`
+`git clone `
+`npm install`
+`expo starT`
