@@ -25,7 +25,7 @@ import CheckUp from '../components/CheckUp';
 import Drop from './Drop';
 
 //configurações do websocket
-const URL = 'ws://192.168.0.115:3000';
+const URL = 'ws://192.168.0.118:3000';
 const client = new W3CWebSocket(URL);
 
 // Componente de alta ordem para usar as funções da câmera
@@ -55,7 +55,8 @@ class TrackHandsScreen extends React.Component {
       ws: [],
       drops: [],
       hp: 5,
-      gameOverFlag: false
+      gameOverFlag: false,
+      dropsPontuation: 0
     };
   }
 
@@ -101,22 +102,31 @@ class TrackHandsScreen extends React.Component {
       const dataFromServer = message.data;
       console.log('Mensagem: ', dataFromServer);
       if (dataFromServer == 'A') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.as.length })
         this.setState({ as: [] });
       } else if (dataFromServer == 'B') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.bs.length })
         this.setState({ bs: [] });
       } else if (dataFromServer == 'C') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.cs.length })
         this.setState({ cs: [] });
       } else if (dataFromServer == 'D') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.ds.length })
         this.setState({ ds: [] });
       } else if (dataFromServer == 'E') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.es.length })
         this.setState({ es: [] });
       } else if (dataFromServer == 'I') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.is.length })
         this.setState({ is: [] });
       } else if (dataFromServer == 'L') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.ls.length })
         this.setState({ ls: [] });
       } else if (dataFromServer == 'U') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.us.length })
         this.setState({ us: [] });
       } else if (dataFromServer == 'W') {
+        this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.ws.length })
         this.setState({ ws: [] });
       }
     };
@@ -341,7 +351,7 @@ class TrackHandsScreen extends React.Component {
     )
   } 
 
-  gameOverSingleplayerModal = (navigation, pontuation) => {
+  gameOverSingleplayerModal = (navigation) => {
     const { gameOverFlag } = this.state; 
     return (
       <View style={{ alignSelf: 'center', alignItems: 'center' }}>
@@ -353,7 +363,7 @@ class TrackHandsScreen extends React.Component {
         transparent
         >
           <Text style={styles.modalTextStyle}>Fim de jogo</Text>
-          <Text style={[styles.modalSubTextStyle ]}>Pontuação: {pontuation} </Text>
+          <Text style={[styles.modalSubTextStyle ]}>Pontuação: {this.state.dropsPontuation} </Text>
           <View style={{ flex: 1, borderColor: 'red', borderWidth: 1 }}>
             <TouchableOpacity style={{ marginTop: SCREEN_HEIGHT * .4 }}>
               <Button 

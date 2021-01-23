@@ -93,7 +93,7 @@ async def server(websocket, path):
         clients.remove(websocket)
     
 
-start_server = websockets.serve(server, "192.168.0.115", PORT)
+start_server = websockets.serve(server, "192.168.0.118", PORT)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
