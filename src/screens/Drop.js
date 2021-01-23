@@ -1,12 +1,33 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, ImageBackground } from 'react-native';
+import { LottieView } from 'lottie-react-native';
 
 export class Drop extends Component {
   constructor(props) {
     super(props);
+    this.state = { showBubble: true }
   }
 
   render() {
+    const splashAnimation = () => <LottieView source={require('../../assets/30718-water-splash-effect.json')} autoPlay />
+
+    if (this.props.endBubble && this.state.showBubble){
+      return (
+        <View styles={styles.container}>
+          { splashAnimation() }
+          {
+            setTimeout(() => {
+              this.setState({ showBubble: false })
+            }, 1250)
+          }
+        </View>
+      )
+    }
+
+    if (this.props.endBubble && !this.state.showBubble) {
+      return null;
+    }
+
     return (
       <View style={styles.container}>
         <ImageBackground

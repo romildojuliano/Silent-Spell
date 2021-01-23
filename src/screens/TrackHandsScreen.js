@@ -1,6 +1,7 @@
 // Módulos do React Native
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ImageBackground, Modal, TouchableOpacity } from 'react-native';
+import { Button } from 'react-native-elements';
 import LottieView from 'lottie-react-native'
 
 // Módulos do Tensorflow.js
@@ -54,6 +55,7 @@ class TrackHandsScreen extends React.Component {
       ws: [],
       drops: [],
       hp: 5,
+      gameOverFlag: false
     };
   }
 
@@ -252,9 +254,10 @@ class TrackHandsScreen extends React.Component {
         ws: [],
         drops: [],
         hp: 5,
+        gameOverFlag: true
       });
 
-      this.props.navigation.navigate('Main');
+      //this.props.navigation.navigate('Main');
     } else {
       this.setState({
         as: vectorAs,
@@ -338,6 +341,48 @@ class TrackHandsScreen extends React.Component {
     )
   } 
 
+  gameOverSingleplayerModal = (navigation, pontuation) => {
+    const { gameOverFlag } = this.state; 
+    return (
+      <View style={{ alignSelf: 'center', alignItems: 'center' }}>
+        <Modal 
+        animationType='slide'
+        hardwareAccelerated
+        visible={gameOverFlag}
+        onRequestClose={() => setModal(false)}
+        transparent
+        >
+          <Text style={styles.modalTextStyle}>Fim de jogo</Text>
+          <Text style={[styles.modalSubTextStyle ]}>Pontuação: {pontuation} </Text>
+          <View style={{ flex: 1, borderColor: 'red', borderWidth: 1 }}>
+            <TouchableOpacity style={{ marginTop: SCREEN_HEIGHT * .4 }}>
+              <Button 
+                title='Jogar novamente'
+                onPress={() => {
+                  this.setState({ gameOverFlag: false });
+                  this.render();
+                }}
+                buttonStyle={styles.ButtonStd}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <Button 
+                title='Sair'
+                onPress={() => {
+                  this.setState({ gameOverFlag: false });
+                  navigation.navigate('Main');
+                }}
+                buttonStyle={{ ...styles.ButtonStd, marginTop: SCREEN_HEIGHT * .015 }}
+              />
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
+      
+    )
+  }
+
   render() {
     const textureDims =
       Platform.OS === 'ios'
@@ -350,15 +395,17 @@ class TrackHandsScreen extends React.Component {
       isModelReady,
       hasPermission,
       drops,
-      hp
+      hp,
+      gameOverFlag
     } = this.state;
 
     if (hasPermission === true) {
       //Carrega o componente do TensorCamera e permite a visualização câmera se showTensor === true
       return (
         <View style={styles.absoluteBackground}>
-          {this.renderTensorCamera(textureDims, tensorDims)}
-          {drops}
+          {!gameOverFlag ? this.renderTensorCamera(textureDims, tensorDims) : null}
+          {!gameOverFlag ? drops : null}
+          {this.gameOverSingleplayerModal(this.props.navigation)}
         </View>
       );
     } else {
@@ -369,6 +416,24 @@ class TrackHandsScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  modalTextStyle: {
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    alignSelf: 'center',
+    paddingTop: SCREEN_HEIGHT * .29, 
+    position: 'absolute',
+    fontSize: Dimensions.get('screen').fontScale * 35,
+    color: '#dbdfef'
+  },
+  modalSubTextStyle: {
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    alignSelf: 'center',
+    paddingTop: SCREEN_HEIGHT * .35, 
+    position: 'absolute',
+    fontSize: Dimensions.get('screen').fontScale * 22,
+    color: '#dbdfef'
+  },
   tfCameraView: {
     width: 1,
     height: 1,
@@ -390,6 +455,16 @@ const styles = StyleSheet.create({
     width: Dimensions.get('screen').width,
     height: Dimensions.get('screen').height * 1.25,
     backgroundColor: '#263056',
+  },
+  ButtonStd: { 
+    alignSelf: 'center', 
+    borderRadius: 30,
+    backgroundColor: '#FF6F61',
+    borderBottomWidth: 2,
+    borderBottomColor: '#000',
+    fontWeight: 'bold',
+    width: Dimensions.get('window').width * .6,
+    height: Dimensions.get('window').height * .1
   },
 });
 
