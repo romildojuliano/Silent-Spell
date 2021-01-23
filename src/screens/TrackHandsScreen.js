@@ -1,6 +1,15 @@
 // Módulos do React Native
 import React from 'react';
-import { StyleSheet, Text, View, Dimensions, ImageBackground, Modal, TouchableOpacity } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  Dimensions, 
+  ImageBackground, 
+  Modal, 
+  TouchableOpacity, 
+  ScrollView 
+} from 'react-native';
 import { Button } from 'react-native-elements';
 import LottieView from 'lottie-react-native'
 
@@ -34,6 +43,7 @@ const TensorCamera = cameraWithTensors(Camera);
 // Dimensões do aparelho
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_FONTSIZE = Dimensions.get('window').fontScale;
 
 class TrackHandsScreen extends React.Component {
   constructor(props) {
@@ -54,7 +64,7 @@ class TrackHandsScreen extends React.Component {
       us: [],
       ws: [],
       drops: [],
-      hp: 5,
+      hp: 3,
       gameOverFlag: false,
       dropsPontuation: 0
     };
@@ -72,6 +82,8 @@ class TrackHandsScreen extends React.Component {
       }
     }
   };
+
+  styledText = (pontuation) => <Text style={{ fontSize: SCREEN_FONTSIZE * 20, color: '#FF6F61', fontWeight: 'bold' }}>{pontuation}</Text>
 
   async componentDidMount() {
     // Altera o estado para indicar que o módulo do TensorFlow está carregado
@@ -201,33 +213,34 @@ class TrackHandsScreen extends React.Component {
     const choosen = Math.floor(Math.random() * 10 - 1);
     const RATE_FACTOR_LEFT = Dimensions.get('window').width * .0425;
     const RATE_FACTOR = Dimensions.get('window').width * .225;
+    const INITIAL_Y = SCREEN_HEIGHT * .125
     switch (choosen) {
       case 0:
-        vectorAs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorAs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
       case 1:
-        vectorBs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorBs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
       case 2:
-        vectorCs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorCs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
       case 3:
-        vectorDs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorDs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
       case 4:
-        vectorEs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorEs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
       case 5:
-        vectorIs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorIs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
       case 6:
-        vectorLs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorLs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
       case 7:
-        vectorUs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorUs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
       case 8:
-        vectorWs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), 0]);
+        vectorWs.push([RATE_FACTOR_LEFT + Math.random() * (SCREEN_WIDTH - RATE_FACTOR), INITIAL_Y]);
         break;
     }
 
@@ -263,7 +276,7 @@ class TrackHandsScreen extends React.Component {
         us: [],
         ws: [],
         drops: [],
-        hp: 5,
+        hp: 3,
         gameOverFlag: true
       });
 
@@ -364,7 +377,7 @@ class TrackHandsScreen extends React.Component {
         >
           <Text style={styles.modalTextStyle}>Fim de jogo</Text>
           <Text style={[styles.modalSubTextStyle ]}>Pontuação: {this.state.dropsPontuation} </Text>
-          <View style={{ flex: 1, borderColor: 'red', borderWidth: 1 }}>
+          <View style={{ flex: 1 }}>
             <TouchableOpacity style={{ marginTop: SCREEN_HEIGHT * .4 }}>
               <Button 
                 title='Jogar novamente'
@@ -393,6 +406,37 @@ class TrackHandsScreen extends React.Component {
     )
   }
 
+  renderPlayerHP = (hp) => {
+    const heart = () => <LottieView source={require('../../assets/4894-heart.json')} loop autoPlay style={{ height: SCREEN_HEIGHT * .1, width: SCREEN_WIDTH * .15 }}/>
+
+    switch (hp) {
+      case 1:
+        return (
+          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .035, position: 'absolute', alignSelf: 'center' }}>
+            {heart()}
+          </ScrollView>
+        );
+      case 2:
+        return (
+          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .035, position: 'absolute', alignSelf: 'center' }}>
+            {heart()}
+            {heart()}
+          </ScrollView>
+        );
+      case 3:
+        return (
+          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .035, position: 'absolute', alignSelf: 'center' }}>
+            {heart()}
+            {heart()}
+            {heart()}
+          </ScrollView>
+        );
+      default:
+        return;
+    }
+    
+  }
+
   render() {
     const textureDims =
       Platform.OS === 'ios'
@@ -406,17 +450,24 @@ class TrackHandsScreen extends React.Component {
       hasPermission,
       drops,
       hp,
+      dropsPontuation,
       gameOverFlag
     } = this.state;
+
 
     if (hasPermission === true) {
       //Carrega o componente do TensorCamera e permite a visualização câmera se showTensor === true
       return (
         <View style={styles.absoluteBackground}>
+          {!gameOverFlag ? this.renderPlayerHP(hp) : null}
           {!gameOverFlag ? this.renderTensorCamera(textureDims, tensorDims) : null}
           {!gameOverFlag ? drops : null}
           {this.gameOverSingleplayerModal(this.props.navigation)}
+          <Text style={{ position: 'absolute', alignSelf: 'center', marginTop: SCREEN_HEIGHT * .9, fontSize: SCREEN_FONTSIZE * 20, color: '#ffffff', fontWeight: 'bold' }}>
+            Pontuação: {this.styledText(dropsPontuation)}
+          </Text>
         </View>
+        
       );
     } else {
       // Tela de carregamento inicial

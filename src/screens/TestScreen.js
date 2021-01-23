@@ -1,60 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Modal, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Button } from 'react-native-elements';
+import LottieView from 'lottie-react-native';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_FONTSIZE = Dimensions.get('window').fontScale;
 
-const TestScreen = (navigation, pontuation) => {
-  const [modal, setModal] = useState(false);
-  let [fontsLoaded] = useFonts({
-    'LakkiReddy-Regular': require('../../assets/LakkiReddy-Regular.ttf'),
-    'OpenSans-Bold': require('../../assets/OpenSans-Bold.ttf'),
-  });
+const styledText = (pontuation) => <Text style={{ fontSize: SCREEN_FONTSIZE * 20, color: 'yellow', fontWeight: 'bold' }}>{pontuation}</Text>
 
-  if (!fontsLoaded) return <></>;
-
+const TestScreen = () => {
+  const heart = () => <LottieView source={require('../../assets/4894-heart.json')} loop autoPlay style={{ height: SCREEN_HEIGHT * .1, width: SCREEN_WIDTH * .15 }}/>
   return (
     <View style={styles.viewStyle}>
-      <Text style={{ ...styles.textStyle }}>
-        Teste
-      </Text>
-
-      <TouchableOpacity>
-        <Button 
-          title='Modal'
-          onPress={() => setModal(true)}
-        />
-      </TouchableOpacity>
-      
-      <Modal 
-        animationType='slide'
-        hardwareAccelerated
-        visible={modal}
-        onRequestClose={() => setModal(false)}
-        transparent
-      >
-        <Text style={styles.modalTextStyle}>Fim de jogo</Text>
-        <Text style={[styles.modalSubTextStyle ]}>Pontuação: {pontuation} </Text>
-        <View style={{ flex: 1, borderColor: 'red', borderWidth: 1 }}>
-          <TouchableOpacity style={{ marginTop: SCREEN_HEIGHT * .4 }}>
-            <Button 
-              title='Jogar novamente'
-              onPress={() => {}}
-              buttonStyle={styles.ButtonStd}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-              <Button 
-                title='Sair'
-                onPress={() => setModal(false)}
-                buttonStyle={{ ...styles.ButtonStd, marginTop: SCREEN_HEIGHT * .015 }}
-              />
-            </TouchableOpacity>
-        </View>
-      </Modal>
+      <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .05, position: 'absolute' }}>
+        {heart()}
+        {heart()}
+        {heart()}
+      </ScrollView>
     </View>
   )
 }
@@ -90,6 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
     flex: 1,
+
   },
   ButtonStd: { 
     alignSelf: 'center', 
