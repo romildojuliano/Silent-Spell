@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
     color: '#dbdfef'
   },
   tfCameraView: {
-    marginTop: SCREEN_HEIGHT,
+    marginTop: SCREEN_HEIGHT * 2,
     width: SCREEN_WIDTH * 0.75,
     height: SCREEN_HEIGHT * 0.5,
     zIndex: 1,
