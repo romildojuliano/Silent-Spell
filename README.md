@@ -9,6 +9,7 @@
 
 ## Instalação
 No terminal, digite:
+
 `git clone `
 
 `npm install`
