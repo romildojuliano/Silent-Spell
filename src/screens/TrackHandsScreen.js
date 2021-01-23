@@ -133,7 +133,7 @@ class TrackHandsScreen extends React.Component {
   }
 
   damageCondition = (letra) => {
-    console.log(letra);
+    //console.log(letra);
     if (letra.length > 0) {
       if (letra[0][1] > SCREEN_HEIGHT) {
         letra.splice(0, 1);
@@ -303,8 +303,8 @@ class TrackHandsScreen extends React.Component {
       câmera na tela do celular. O UpdatePreview atualiza o frame,
       enquanto que o gl.endFrameEXP procoessa o próximo frame.
       */
-      // updatePreview();
-      // gl.endFrameEXP();
+       updatePreview();
+       gl.endFrameEXP();
 
       this.setState({ frameCounter: this.state.frameCounter + 1 });
 
@@ -445,8 +445,9 @@ const styles = StyleSheet.create({
     color: '#dbdfef'
   },
   tfCameraView: {
-    width: 1,
-    height: 1,
+    marginTop: SCREEN_HEIGHT,
+    width: SCREEN_WIDTH * 0.75,
+    height: SCREEN_HEIGHT * 0.5,
     zIndex: 1,
     borderWidth: 0,
     borderRadius: 0,
