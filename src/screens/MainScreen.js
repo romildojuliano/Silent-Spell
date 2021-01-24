@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
     marginTop: Dimensions.get('window').height * .05,
   },
   titleStyle: {
-    fontFamily: 'OpenSans-Bold', 
     fontWeight: 'bold', 
     //textShadowColor: 'rgba(0, 0, 0, 1)',
     //textShadowOffset: { width: 0, height: 1 },

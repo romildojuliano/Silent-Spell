@@ -6,6 +6,7 @@ import {
   View, 
   Dimensions, 
   ImageBackground, 
+  Image,
   Modal, 
   TouchableOpacity, 
   ScrollView 
@@ -83,7 +84,7 @@ class TrackHandsScreen extends React.Component {
     }
   };
 
-  styledText = (pontuation) => <Text style={{ fontSize: SCREEN_FONTSIZE * 20, color: '#FF6F61', fontWeight: 'bold' }}>{pontuation}</Text>
+  styledText = (pontuation) => <Text style={{ fontSize: SCREEN_FONTSIZE * 20, color: '#fc9e21', fontWeight: 'bold' }}>{pontuation}</Text>
 
   async componentDidMount() {
     // Altera o estado para indicar que o módulo do TensorFlow está carregado
@@ -147,7 +148,7 @@ class TrackHandsScreen extends React.Component {
   damageCondition = (letra) => {
     //console.log(letra);
     if (letra.length > 0) {
-      if (letra[0][1] > SCREEN_HEIGHT) {
+      if (letra[0][1] > SCREEN_HEIGHT * .7) {
         letra.splice(0, 1);
         this.setState({
           hp: this.state.hp - 1,
@@ -358,11 +359,16 @@ class TrackHandsScreen extends React.Component {
     );
   }
 
-  renderHP = (hp) => {
+  renderRain = () => {
     return (
-      <LottieView source={require('../../assets/4894-heart.json')} loop autoplay autosize={false} style={{ width: 100, height: 100 }}/>
-    )
-  } 
+      <>
+        <Image source={require('../../assets/clouds-1.png')} style={{ width: SCREEN_WIDTH * .4 , height: SCREEN_HEIGHT * .125, resizeMode: 'stretch', marginTop: SCREEN_HEIGHT * .05, left: 0, position: 'absolute' }}/>
+        <Image source={require('../../assets/clouds-2.png')} style={{ width: SCREEN_WIDTH * .4 , height: SCREEN_HEIGHT * .125, resizeMode: 'stretch', marginTop: SCREEN_HEIGHT * .05, left: SCREEN_WIDTH * .150, position: 'absolute' }}/>
+        <Image source={require('../../assets/clouds-3.png')} style={{ width: SCREEN_WIDTH * .4 , height: SCREEN_HEIGHT * .125, resizeMode: 'stretch', marginTop: SCREEN_HEIGHT * .05, left: SCREEN_WIDTH * .4, position: 'absolute' }}/>
+        <Image source={require('../../assets/clouds-4.png')} style={{ width: SCREEN_WIDTH * .4 , height: SCREEN_HEIGHT * .125, resizeMode: 'stretch', marginTop: SCREEN_HEIGHT * .05, left: SCREEN_WIDTH * .62, position: 'absolute' }}/>
+      </>
+    );
+  }
 
   gameOverSingleplayerModal = (navigation) => {
     const { gameOverFlag } = this.state; 
@@ -412,20 +418,20 @@ class TrackHandsScreen extends React.Component {
     switch (hp) {
       case 1:
         return (
-          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .035, position: 'absolute', alignSelf: 'center' }}>
+          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .9125, position: 'absolute', alignSelf: 'center' }}>
             {heart()}
           </ScrollView>
         );
       case 2:
         return (
-          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .035, position: 'absolute', alignSelf: 'center' }}>
+          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .9125, position: 'absolute', alignSelf: 'center' }}>
             {heart()}
             {heart()}
           </ScrollView>
         );
       case 3:
         return (
-          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .035, position: 'absolute', alignSelf: 'center' }}>
+          <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .9125, position: 'absolute', alignSelf: 'center' }}>
             {heart()}
             {heart()}
             {heart()}
@@ -458,16 +464,23 @@ class TrackHandsScreen extends React.Component {
     if (hasPermission === true) {
       //Carrega o componente do TensorCamera e permite a visualização câmera se showTensor === true
       return (
-        <View style={styles.absoluteBackground}>
-          {!gameOverFlag ? this.renderPlayerHP(hp) : null}
-          {!gameOverFlag ? this.renderTensorCamera(textureDims, tensorDims) : null}
-          {!gameOverFlag ? drops : null}
-          {this.gameOverSingleplayerModal(this.props.navigation)}
-          <Text style={{ position: 'absolute', alignSelf: 'center', marginTop: SCREEN_HEIGHT * .9, fontSize: SCREEN_FONTSIZE * 20, color: '#ffffff', fontWeight: 'bold' }}>
-            Pontuação: {this.styledText(dropsPontuation)}
-          </Text>
-        </View>
-        
+          <ImageBackground source={require('../../assets/gamebackground.png')}  style={{ flex: 1, resizeMode: 'cover' }}>
+            <View>
+              {!gameOverFlag ? this.renderRain() : null}
+              {!gameOverFlag ? this.renderPlayerHP(hp) : null}
+              {!gameOverFlag ? this.renderTensorCamera(textureDims, tensorDims) : null}
+              {!gameOverFlag ? drops : null}
+              {this.gameOverSingleplayerModal(this.props.navigation)}
+              {
+              !gameOverFlag ?
+                <Text style={{ position: 'absolute', alignSelf: 'center', marginTop: SCREEN_HEIGHT * .9, fontSize: SCREEN_FONTSIZE * 20, color: '#ffffff', fontWeight: 'bold' }}>
+                  Pontuação: {this.styledText(dropsPontuation)}
+                </Text>
+                :
+                null
+              }
+            </View>
+          </ImageBackground>
       );
     } else {
       // Tela de carregamento inicial
@@ -484,7 +497,7 @@ const styles = StyleSheet.create({
     paddingTop: SCREEN_HEIGHT * .29, 
     position: 'absolute',
     fontSize: Dimensions.get('screen').fontScale * 35,
-    color: '#dbdfef'
+    color: '#fc9e21'
   },
   modalSubTextStyle: {
     fontWeight: 'bold', 
@@ -493,7 +506,7 @@ const styles = StyleSheet.create({
     paddingTop: SCREEN_HEIGHT * .35, 
     position: 'absolute',
     fontSize: Dimensions.get('screen').fontScale * 22,
-    color: '#dbdfef'
+    color: '#fc9e21'
   },
   tfCameraView: {
     marginTop: SCREEN_HEIGHT * 2,

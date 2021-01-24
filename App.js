@@ -23,7 +23,7 @@ const navigator = createStackNavigator(
     Test: TestScreen
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'Main',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
   }

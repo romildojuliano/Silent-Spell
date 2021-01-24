@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, StyleSheet, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Modal, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Button } from 'react-native-elements';
 import LottieView from 'lottie-react-native';
@@ -11,16 +11,9 @@ const SCREEN_FONTSIZE = Dimensions.get('window').fontScale;
 const styledText = (pontuation) => <Text style={{ fontSize: SCREEN_FONTSIZE * 20, color: 'yellow', fontWeight: 'bold' }}>{pontuation}</Text>
 
 const TestScreen = () => {
-  const heart = () => <LottieView source={require('../../assets/4894-heart.json')} loop autoPlay style={{ height: SCREEN_HEIGHT * .1, width: SCREEN_WIDTH * .15 }}/>
   return (
-    <View style={styles.viewStyle}>
-      <ScrollView horizontal={true} style={{ width: SCREEN_WIDTH * .48 , height: SCREEN_HEIGHT * .1, marginTop: SCREEN_HEIGHT * .05, position: 'absolute' }}>
-        {heart()}
-        {heart()}
-        {heart()}
-      </ScrollView>
-    </View>
-  )
+    <ImageBackground source={require('../../assets/gamebackground.png')}  style={{ flex: 1, resizeMode: 'cover' }}/>
+  );
 }
 
 const styles = StyleSheet.create({
