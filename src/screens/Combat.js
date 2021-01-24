@@ -46,7 +46,9 @@ class Combat extends React.Component {
     frameCounter: 0,
     hp: 1.0,
     enemyHp: 1.0,
-    confidence:0.4
+    letterConfidence:0.0,
+    choosenLetter:'',
+    spelledWord:''
   }
 
   /*
@@ -89,6 +91,18 @@ class Combat extends React.Component {
     client.onmessage = (message) => {
       const dataFromServer = message.data;
       console.log('Mensagem: ', dataFromServer);
+      if(dataFromServer==this.state.choosenLetter){
+          console.log('increasing Confidence')
+          this.setState({letterConfidence:this.state.letterConfidence+0.1})
+      }else{
+          this.setState({letterConfidence:0.0})
+      }
+      
+      if(this.state.letterConfidence>0.9){
+          this.setState({spelledWord:[...this.state.spelledWord,dataFromServer],choosenLetter:'',letterConfidence:0.0})
+      }else{
+        this.setState({choosenLetter:dataFromServer})
+      }
     };
 
     let [fontsLoaded] = useFonts({
@@ -105,7 +119,7 @@ class Combat extends React.Component {
     const color = `rgb(180,${Math.floor(amount*255)},0)`
     return (<View style={{width:'85%',flexDirection:'row'}}>
                 <View style={{width:"100%", flex:1}}>
-                    <Progress.Bar progress={amount} width={null} borderRadius={0} borderWidth={0} unfilledColor="gray" color={color} height={SCREEN_HEIGHT*0.04} animated style={{ width: "100%" }}/>
+                    <Progress.Bar progress={amount} width={null} borderRadius={20} borderWidth={0} unfilledColor="gray" color={color} height={SCREEN_HEIGHT*0.04} animated style={{ width: "100%" }}/>
                     <View style={{position: "absolute", width: "100%", height:"100%", alignItems: "center", justifyContent: "center"}}>
                         <Text style={{fontSize:SCREEN_HEIGHT*0.03}}>
                             {amount * 100} 
@@ -207,12 +221,12 @@ class Combat extends React.Component {
                 <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-around', alignSelf:'stretch'}}>
                     <View style={{ alignItems:'center'}}>
                         <Text style={styles.Text}>PALAVRA FORMADA:</Text>
-                        {this.drawCharacter(1.0,'ABC')}
+                        {this.drawCharacter(1.0,this.state.spelledWord)}
                     </View>
     
                     <View style={{ alignItems:'center',}}>
                         <Text style={styles.Text}>LETRA DETECTADA:</Text>
-                        {this.drawCharacter(this.state.confidence,'A')}
+                        {this.drawCharacter(this.state.letterConfidence,this.state.choosenLetter)}
                     </View>
     
                 </View>
