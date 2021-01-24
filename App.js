@@ -8,6 +8,7 @@ import MainScreen from './src/screens/MainScreen';
 import TrackHandsScreen from './src/screens/TrackHandsScreen';
 import ConfigScreen from './src/screens/ConfigScreen';
 import TestScreen from './src/screens/TestScreen';
+import Combat from './src/screens/Combat';
 
 import React from 'react';
 import firebase from 'firebase';
@@ -20,10 +21,11 @@ const navigator = createStackNavigator(
     Register: RegisterSCreen,
     Main: MainScreen,
     Config: ConfigScreen,
-    Test: TestScreen
+    Test: TestScreen,
+    Combat: Combat
   },
   {
-    initialRouteName: 'Main',
+    initialRouteName: 'Combat',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
   }
