@@ -13,6 +13,7 @@ import Combat from './src/screens/Combat';
 import React from 'react';
 import firebase from 'firebase';
 import { LogBox } from 'react-native';
+import Suggestion from './src/components/Suggestion';
 
 const navigator = createStackNavigator(
   {
@@ -22,6 +23,7 @@ const navigator = createStackNavigator(
     Main: MainScreen,
     Config: ConfigScreen,
     Test: TestScreen,
+    Suggestion: Suggestion,
     Combat: Combat
   },
   {

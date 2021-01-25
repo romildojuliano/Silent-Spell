@@ -20,6 +20,8 @@ import { Camera } from 'expo-camera';
 import Constants from 'expo-constants'
 import * as Permissions from 'expo-permissions'
 import * as Progress from 'react-native-progress';
+import { useFonts } from 'expo-font';
+
 
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
