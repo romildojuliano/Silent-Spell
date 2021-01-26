@@ -1,6 +1,6 @@
 import os
 import json
-from Game import Game, Magia
+from Game import Game, Spell
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 app = Flask(__name__)
@@ -17,16 +17,21 @@ def add_game(player1, player2):
     gameID = player1 + player2
     users[player1] = {'enemy': player2, 'first': True, 'spell': ''}
     users[player2] = {'enemy': player1, 'first': False, 'spell': ''}
+    join_room(gameID, player1)
+    join_room(gameID, player2)
     games[gameID] = Game(player1, player2)
+    buffed, debuffed = games[gameID].start_turn()
+    emit('start_turn', json.dumps({'buffedLetter': buffed, 'debuffedLetter':debuffed}), to=gameID)
     print(f'Number of users: {len(users)}')
     print(f'Number of games: {len(games)}')
+
 
 @socketio.on('connect')
 def connect():
     global matching
     if matching == '':
         matching = request.sid
-        print('User {matching} is waiting for an oponent!')
+        print(f'User {matching} is waiting for an oponent!')
     else:
         add_game(matching, request.sid)
         matching = ''
@@ -39,6 +44,8 @@ def disconnect():
     if users[playerID]['enemy']:
         enemyID = users[playerID]['enemy']
         gameID = playerID + enemyID if users[playerID]['first'] else enemyID+playerID 
+        leave_room(gameID, playerID)
+        leave_room(gameID, enemyID)
         users.pop(playerID)
         games.pop(gameID)
         if matching == '':
@@ -57,9 +64,9 @@ def end_turn(data):
     playerID = request.sid
     enemyID = users[playerID]['enemy']
     gameID = playerID + enemyID if users[playerID]['first'] else enemyID+playerID
-    print('playerID: {}, enemyID: {}, gameID: {}'.format(playerID, enemyID, gameID))
+    # print('playerID: {}, enemyID: {}, gameID: {}'.format(playerID, enemyID, gameID))
 
-    users[playerID]['spell'] = Magia(int(data['confidence']), data['type'], data['element'])
+    users[playerID]['spell'] = Spell(int(data['confidence']), data['type'], data['element'])
     if users[enemyID]['spell'] != '':
         if not users[playerID]['first']:
             temp = playerID
@@ -74,6 +81,11 @@ def end_turn(data):
         
         spell1 = users[enemyID]['spell'] = ''
         spell2 = users[playerID]['spell'] = ''
+
+        buffed, debuffed = games[gameID].start_turn()
+        emit('start_turn', json.dumps({'buffedLetter': buffed, 'debuffedLetter':debuffed}), to=gameID)
+
+   
 
 if __name__ == '__main__':
     PORT = int(os.environ.get("PORT", 5000))
