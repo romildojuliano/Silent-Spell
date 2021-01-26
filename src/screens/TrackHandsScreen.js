@@ -351,11 +351,13 @@ class TrackHandsScreen extends React.Component {
 
   loadingScreen(isTfReady, isModelReady, hasPermission) {
     return (
-      <CheckUp
-        isTfReady={isTfReady}
-        isModelReady={isModelReady}
-        hasPermission={hasPermission}
-      />
+      <ImageBackground source={require('../../assets/gamebackground.png')}  style={{ flex: 1, resizeMode: 'cover' }}>
+        <CheckUp
+          isTfReady={isTfReady}
+          isModelReady={isModelReady}
+          hasPermission={hasPermission}
+        />
+      </ImageBackground>
     );
   }
 

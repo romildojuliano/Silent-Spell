@@ -23,7 +23,7 @@ const navigator = createStackNavigator(
     Test: TestScreen
   },
   {
-    initialRouteName: 'Main',
+    initialRouteName: 'Auth',
     headerMode: 'none',
     mode: Platform.OS === 'ios' ? 'modal' : 'card',
   }
@@ -52,5 +52,6 @@ export default () => {
     firebase.app();
     console.log('App iniciado.');
   }
+
   return <App />;
 };

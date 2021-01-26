@@ -13,6 +13,7 @@ import * as Animatable from 'react-native-animatable';
 import LottieView from 'lottie-react-native';
 import { useFonts } from 'expo-font';
 import firebase from 'firebase';
+import { Audio } from 'expo-av';
 
 const LoadingScreen = () => { 
   return (
@@ -70,7 +71,25 @@ export default function AuthScreen({ navigation }) {
   const [flag, setFlag] = useState(0);
   const [email, setEmail] = useState('testuser@test.com');
   const [password, setPassword] = useState('123456');
+  const [sound, setSound] = useState(null);
 
+  async function playSound() {
+    console.log('Loading Sound...');
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/Blouse.mp3'));
+    setSound(sound);
+    console.log('Playing Sound');
+    await sound.playAsync();
+  }
+
+  React.useEffect(() => {
+    return sound ?
+    () => {
+      console.log('Unloading Sound');
+      sound.unloadAsync();
+    }
+    :
+    undefined
+  }, [sound])
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -82,14 +101,15 @@ export default function AuthScreen({ navigation }) {
     }
   })
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || sound == null) {
+    playSound();
     return <></>;
   }
   else {
     if (flag == 0) {
       setInterval(() => {
         setFlag(1);
-      }, 5000);
+      }, 7500);
       
       return LoadingScreen();
       
@@ -168,7 +188,6 @@ export default function AuthScreen({ navigation }) {
 
           default: 
             return LoadingScreen();
-
       }
       
         

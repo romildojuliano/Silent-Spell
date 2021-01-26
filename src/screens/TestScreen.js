@@ -1,18 +1,39 @@
 import React, { useState } from 'react';
-import { View, Text, Modal, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Image, ImageBackground } from 'react-native';
-import { useFonts } from 'expo-font';
-import { Button } from 'react-native-elements';
-import LottieView from 'lottie-react-native';
+import { View, Text,  StyleSheet, Dimensions, Button } from 'react-native';
+import { Audio } from 'expo-av';
+
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_FONTSIZE = Dimensions.get('window').fontScale;
 
-const styledText = (pontuation) => <Text style={{ fontSize: SCREEN_FONTSIZE * 20, color: 'yellow', fontWeight: 'bold' }}>{pontuation}</Text>
-
 const TestScreen = () => {
+  const [sound, setSound] = useState();
+
+  async function playSound() {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync(
+       require('../../assets/Blouse.mp3')
+    );
+    setSound(sound);
+
+    console.log('Playing Sound');
+    await sound.playAsync(); 
+  }
+
+  React.useEffect(() => {
+    return sound? 
+      () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync(); 
+      }
+      : undefined;
+  }, [sound]);
+
   return (
-    <ImageBackground source={require('../../assets/gamebackground.png')}  style={{ flex: 1, resizeMode: 'cover' }}/>
+    <View style={{ marginTop: SCREEN_HEIGHT * .5, width: 200, height: 75, alignSelf: 'center' }}>
+      <Button title="Play Sound" onPress={playSound} />
+    </View>
   );
 }
 
