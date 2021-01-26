@@ -5,7 +5,8 @@ import {
   Text, 
   View, 
   Dimensions,
-  Image
+  Image,
+  Modal
 } from 'react-native'
 
 // Módulos do Tensorflow.js
@@ -26,6 +27,7 @@ import { useFonts } from 'expo-font';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 
 import CheckUp from '../components/CheckUp'
+import Suggestion from '../components/Suggestion'
 
 //configurações do websocket
 const URL = 'ws://192.168.0.108:3000';
@@ -50,7 +52,10 @@ class Combat extends React.Component {
     enemyHp: 1.0,
     letterConfidence:0.0,
     choosenLetter:'',
-    spelledWord:''
+    spelledWord:'',
+    showPopUp:true,
+    buffedLetter:'A',
+    debuffedLetter:'B'
   }
 
   /*
@@ -143,6 +148,22 @@ class Combat extends React.Component {
           </Text>
       );
   }
+  
+  suggestionPopUp = () =>{
+    if(this.state.showPopUp){
+      return (
+        <Modal transparent={true} visible={this.state.showPopUp}>
+          <View style={{backgroundColor:'#000000aa',flex:1,justifyContent:'space-around'}}>
+            <Suggestion buffedLetter={this.state.buffedLetter} debuffedLetter={this.state.debuffedLetter} update={()=>{this.setState({showPopUp:false})}}/>
+          </View>
+        </Modal>
+      );
+    }else{
+      return null
+    }
+    
+  }
+
   handleCameraStream = (images, updatePreview, gl) => {
     console.log(detectGLCapabilities(gl));
      
@@ -238,7 +259,11 @@ class Combat extends React.Component {
                         {this.renderTensorCamera(textureDims, tensorDims)}
                     </View>
                 </View>
+            
+              {this.suggestionPopUp()} 
+             
             </View>
+
         );
       
            
