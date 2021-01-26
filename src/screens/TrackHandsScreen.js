@@ -99,33 +99,33 @@ class TrackHandsScreen extends React.Component {
     };
 
     client.onmessage = (message) => {
-      const dataFromServer = message.data;
+      const dataFromServer = JSON.parse(message.data);
       console.log('Mensagem: ', dataFromServer);
-      if (dataFromServer == 'A') {
+      if (dataFromServer.letter == 'A') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.as.length })
         this.setState({ as: [] });
-      } else if (dataFromServer == 'B') {
+      } else if (dataFromServer.letter == 'B') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.bs.length })
         this.setState({ bs: [] });
-      } else if (dataFromServer == 'C') {
+      } else if (dataFromServer.letter == 'C') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.cs.length })
         this.setState({ cs: [] });
-      } else if (dataFromServer == 'D') {
+      } else if (dataFromServer.letter == 'D') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.ds.length })
         this.setState({ ds: [] });
-      } else if (dataFromServer == 'E') {
+      } else if (dataFromServer.letter == 'E') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.es.length })
         this.setState({ es: [] });
-      } else if (dataFromServer == 'I') {
+      } else if (dataFromServer.letter == 'I') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.is.length })
         this.setState({ is: [] });
-      } else if (dataFromServer == 'L') {
+      } else if (dataFromServer.letter == 'L') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.ls.length })
         this.setState({ ls: [] });
-      } else if (dataFromServer == 'U') {
+      } else if (dataFromServer.letter == 'U') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.us.length })
         this.setState({ us: [] });
-      } else if (dataFromServer == 'W') {
+      } else if (dataFromServer.letter == 'W') {
         this.setState({ dropsPontuation: this.state.dropsPontuation + this.state.ws.length })
         this.setState({ ws: [] });
       }

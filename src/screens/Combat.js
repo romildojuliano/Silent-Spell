@@ -26,7 +26,7 @@ import CheckUp from '../components/CheckUp';
 import Suggestion from '../components/Suggestion';
 
 //configurações do websocket
-const URL = 'ws://192.168.0.115:';
+const URL = 'ws://192.168.0.108:';
 const PORTWS = 3000;
 const PORTSIO = 5000;
 const client = new W3CWebSocket(URL + PORTWS);
@@ -51,7 +51,7 @@ class Combat extends React.Component {
     letterConfidence: 0.0,
     spellConfidence: 0.0,
     choosenLetter: '',
-    spelledWord: '',
+    spelledWord: 'AEILUW',
     showPopUp: true,
     buffedLetter: 'A',
     debuffedLetter: 'B',
@@ -96,25 +96,23 @@ class Combat extends React.Component {
     };
 
     client.onmessage = (message) => {
-      const dataFromServer = message.data;
-      console.log('Mensagem: ', dataFromServer);
-      if (dataFromServer == this.state.choosenLetter) {
-        console.log('increasing Confidence');
-        this.setState({ letterConfidence: this.state.letterConfidence + 0.1 });
+      const dataFromServer = JSON.parse(message.data);
+      
+      if (dataFromServer.letter == this.state.choosenLetter) {
+        this.setState({ letterConfidence: this.state.letterConfidence + 0.1, totalconfidence:this.state.totalconfidence + dataFromServer.prob });
       } else {
-        this.setState({ letterConfidence: 0.0 });
+        this.setState({ letterConfidence: 0.0, totalconfidence:0.0 });
       }
 
       if (this.state.letterConfidence > 0.9) {
         this.setState({
-          totalconfidence:
-            this.state.totalconfidence + this.state.letterConfidence,
-          spelledWord: [...this.state.spelledWord, dataFromServer],
+          totalconfidence: 0.0,
+          spelledWord: [...this.state.spelledWord, dataFromServer.letter],
           choosenLetter: '',
           letterConfidence: 0.0,
         });
       } else {
-        this.setState({ choosenLetter: dataFromServer });
+        this.setState({ choosenLetter: dataFromServer.letter});
       }
     };
 
@@ -124,10 +122,13 @@ class Combat extends React.Component {
     });
 
     socket.on('update_hp', (data) => {
+      console.log('updating health points')
+      healths = JSON.parse(data)
+      console.log(healths)
       this.setState({
         spelledWord: '',
-        hp: data.playerHP,
-        enemyHp: data.enemyHP,
+        hp: healths.player/100,
+        enemyHp: healths.enemy/100,
         letterConfidence: 0,
         choosenLetter: '',
         totalconfidence: 0.0,
@@ -136,20 +137,22 @@ class Combat extends React.Component {
 
     socket.on('start_turn', (data) => {
       console.log('Novo turno!');
+      let letters = JSON.parse(data)
       this.setState({
-        buffedLetter: data.buffedLetter,
-        debuffedLetter: data.debuffedLetter,
+        buffedLetter: letters.buffedLetter,
+        debuffedLetter: letters.debuffedLetter,
       });
       setTimeout(() => {
         console.log('fim do turno');
         const { spelledWord, spellConfidence } = this.state;
+        console.log(spelledWord)
         let spell = {
           type: spelledWord[0],
-          element: spelledWord.splice(0, 1),
+          element: spelledWord.slice(0,1),
           confidence: spellConfidence,
         };
         socket.emit('end_turn', spell);
-      }, 10000);
+      }, 30000);
     });
 
     let [fontsLoaded] = useFonts({

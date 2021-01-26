@@ -86,14 +86,14 @@ async def server(websocket, path):
                 pred,pred_idx,probs = learn_inf.predict(inputPoints.iloc[0])
                 print(vocab[pred_idx])
                 for client in clients:
-                    #if client != websocket:
-                    await client.send(vocab[pred_idx])
+                    if client == websocket:
+                        await client.send(json.dumps({'letter':vocab[pred_idx],'prob':float(probs[pred_idx])}))
     finally:
         # Unregister.
         clients.remove(websocket)
     
 
-start_server = websockets.serve(server, "192.168.0.118", PORT)
+start_server = websockets.serve(server, "192.168.0.108", PORT)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
