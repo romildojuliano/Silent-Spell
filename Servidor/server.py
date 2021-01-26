@@ -4,7 +4,7 @@ from Game import Game, Magia
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'quem adivinhar é gay'
+app.config['SECRET_KEY'] = 'muito secreto'
 socketio = SocketIO(app, cors_allowed_origins="*", cors_allowed_methods ='*',  cors_allowed_headers='*')
 
 matching = ''
@@ -79,4 +79,3 @@ if __name__ == '__main__':
     PORT = int(os.environ.get("PORT", 5000))
     print(f'abriu na porta {PORT}')
     socketio.run(app, host='0.0.0.0', port=PORT)
-    

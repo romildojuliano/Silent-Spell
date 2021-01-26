@@ -2,13 +2,13 @@ from Player import Player
 import random
 
 class Spell:
-    def __init__(self,confidence,tipo,element):
+    def __init__(self,confidence,type,element):
         self.confidence = confidence
-        self.tipo = tipo
-        if tipo == 'A':
+        self.type = type
+        if type == 'A':
             self.attack = True
             self.defense = False
-        elif tipo == 'D':
+        elif type == 'D':
             self.defense = True
             self.attack = False
         self.element = element
@@ -19,29 +19,29 @@ class Game:
         self.player2 = Player(100.0,player2Id)
         spells = 'EILUW LUCBE BLICB UWLCE CLUWI IBLBC'
         spells = spells.split(' ')
-        trigramss = []
+        trigrams = []
         for spell in spells:
             aux = []
             aux.append('_'+spell[0:2])
             for i in range(1,len(spell)-1):
                 aux.append(spell[i-1:i+2])
             aux.append(spell[len(spell)-2:len(spell)] + '_')
-            trigramss.append(aux)
-        self.trigramss = trigramss
+            trigrams.append(aux)
+        self.trigrams = trigrams
         self.spells = spells
 
     def decodeSpell(self,x):
-        trigrams = []
-        trigrams.append('_'+x[0:2])
+        trigram = []
+        trigram.append('_'+x[0:2])
         for i in range(1,len(x)-1):
-            trigrams.append(x[i-1:i+2])
-        trigrams.append(x[len(x)-2:len(x)] + '_')
+            trigram.append(x[i-1:i+2])
+        trigram.append(x[len(x)-2:len(x)] + '_')
 
         spells = []
-        for j in range(len(self.trigramss)):
+        for j in range(len(self.trigrams)):
             contador = 0
             for i in range(5):
-                if i < len(trigrams) and self.trigramss[j][i] == trigrams[i]:
+                if i < len(trigram) and self.trigrams[j][i] == trigram[i]:
                     contador+=1
             spells.append(contador)
         
@@ -97,8 +97,8 @@ class Game:
         s2Index = self.decodeSpell(spellFromClient2.element)
         self.player1.setSpell(s1Index)
         self.player2.setSpell(s2Index)
-        spell1 = Spell(spellFromClient1.confidence, spellFromClient1.tipo, self.spells[s1Index])
-        spell2 = Spell(spellFromClient2.confidence, spellFromClient2.tipo, self.spells[s2Index])
+        spell1 = Spell(spellFromClient1.confidence, spellFromClient1.type, self.spells[s1Index])
+        spell2 = Spell(spellFromClient2.confidence, spellFromClient2.type, self.spells[s2Index])
         
         damage1, damage2 = self.compara(spell1,spell2)
         self.player1.updateHealthPoints(damage1)
