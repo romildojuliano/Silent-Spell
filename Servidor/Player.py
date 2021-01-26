@@ -6,3 +6,6 @@ class Player:
     
     def setSpell(self,newSpell):
         self.spell = newSpell
+    
+    def updateHealthPoints(self,dano):
+        self.healthPoints -= dano
