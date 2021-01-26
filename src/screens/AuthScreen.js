@@ -75,7 +75,7 @@ export default function AuthScreen({ navigation }) {
 
   async function playSound() {
     console.log('Loading Sound...');
-    const { sound } = await Audio.Sound.createAsync(require('../../assets/Blouse.mp3'));
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/ChildrenGames.mp3'));
     setSound(sound);
     console.log('Playing Sound');
     await sound.playAsync();
