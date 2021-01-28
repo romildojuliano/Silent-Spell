@@ -26,7 +26,7 @@ import CheckUp from '../components/CheckUp';
 import Suggestion from '../components/Suggestion';
 
 //configurações do websocket
-const URL = 'ws://192.168.0.108:';
+const URL = 'ws://192.168.0.110:';
 const PORTWS = 3000;
 const PORTSIO = 5000;
 const client = new W3CWebSocket(URL + PORTWS);
@@ -51,7 +51,7 @@ class Combat extends React.Component {
     letterConfidence: 0.0,
     spellConfidence: 0.0,
     choosenLetter: '',
-    spelledWord: 'AEILUW',
+    spelledWord: 'AEI',
     showPopUp: true,
     buffedLetter: 'A',
     debuffedLetter: 'B',
@@ -99,14 +99,14 @@ class Combat extends React.Component {
       const dataFromServer = JSON.parse(message.data);
       
       if (dataFromServer.letter == this.state.choosenLetter) {
-        this.setState({ letterConfidence: this.state.letterConfidence + 0.1, totalconfidence:this.state.totalconfidence + dataFromServer.prob });
+        this.setState({ letterConfidence: this.state.letterConfidence + 0.2, spellConfidence:this.state.spellConfidence + dataFromServer.prob });
       } else {
-        this.setState({ letterConfidence: 0.0, totalconfidence:0.0 });
+        this.setState({ letterConfidence: 0.0 });
       }
 
       if (this.state.letterConfidence > 0.9) {
         this.setState({
-          totalconfidence: 0.0,
+          spellConfidence: 0.0,
           spelledWord: [...this.state.spelledWord, dataFromServer.letter],
           choosenLetter: '',
           letterConfidence: 0.0,
@@ -123,7 +123,7 @@ class Combat extends React.Component {
 
     socket.on('update_hp', (data) => {
       console.log('updating health points')
-      healths = JSON.parse(data)
+      const healths = JSON.parse(data)
       console.log(healths)
       this.setState({
         spelledWord: '',
@@ -131,7 +131,7 @@ class Combat extends React.Component {
         enemyHp: healths.enemy/100,
         letterConfidence: 0,
         choosenLetter: '',
-        totalconfidence: 0.0,
+        spellConfidence: 0.0,
       });
     });
 
@@ -147,8 +147,8 @@ class Combat extends React.Component {
         const { spelledWord, spellConfidence } = this.state;
         console.log(spelledWord)
         let spell = {
-          type: spelledWord[0],
-          element: spelledWord.slice(0,1),
+          type: spelledWord[0] ? spelledWord[0]:'A',
+          element: spelledWord.slice(1),
           confidence: spellConfidence,
         };
         socket.emit('end_turn', spell);

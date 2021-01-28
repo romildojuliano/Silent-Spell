@@ -59,14 +59,22 @@ def disconnect():
     print(f'Number of users: {len(users)}')
     print(f'Number of games: {len(games)}')
 
+buffed = 'A'
+debuffed = 'B'
+
 @socketio.on('end_turn')
 def end_turn(data):
+    print(data)
+    global buffed
+    global debuffed
     playerID = request.sid
     enemyID = users[playerID]['enemy']
     gameID = playerID + enemyID if users[playerID]['first'] else enemyID+playerID
     # print('playerID: {}, enemyID: {}, gameID: {}'.format(playerID, enemyID, gameID))
-
-    users[playerID]['spell'] = Spell(int(data['confidence']), data['type'], data['element'])
+    if len(data['element']) <= 1 or data['confidence'] == None or data['type'] == None or data['element'] == None:
+        emit('start_turn', json.dumps({'buffedLetter': buffed, 'debuffedLetter':debuffed}), to=gameID)
+        return
+    users[playerID]['spell'] = Spell(float(data['confidence']), data['type'], data['element'])
     if users[enemyID]['spell'] != '':
         if not users[playerID]['first']:
             temp = playerID
@@ -76,6 +84,7 @@ def end_turn(data):
         spell1 = users[playerID]['spell']
         spell2 = users[enemyID]['spell']
         playerHP, enemyHP = games[gameID].end_turn(spell1, spell2)
+        print('playerHP = %s, enemyHp = %s'%(playerHP,enemyHP))
         emit('update_hp', json.dumps({'player':playerHP, 'enemy':enemyHP}), to=playerID)
         emit('update_hp', json.dumps({'player':enemyHP, 'enemy':playerHP}), to=enemyID)
         
@@ -84,8 +93,7 @@ def end_turn(data):
 
         buffed, debuffed = games[gameID].start_turn()
         emit('start_turn', json.dumps({'buffedLetter': buffed, 'debuffedLetter':debuffed}), to=gameID)
-
-   
+    
 
 if __name__ == '__main__':
     PORT = int(os.environ.get("PORT", 5000))
