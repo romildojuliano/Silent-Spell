@@ -11,5 +11,7 @@ web-build/
 .vscode
 # macOS
 .DS_Store
-
+player2/node_modules
+player2/.vscode
+player2/.expo
 # Ignora a pasta com os módulos do React Native
