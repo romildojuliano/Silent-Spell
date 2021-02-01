@@ -1,15 +1,23 @@
 import React, { Component } from 'react';
-import { TextInput, View, Button } from 'react-native';
+import { View, Button } from 'react-native';
 import io from 'socket.io-client';
 
-const URL = 'http://192.168.0.115:5000';
+const URL = 'ws://192.168.0.115:5000';
 let socket;
 
 // eslint-disable-next-line react/prefer-stateless-function
 export class Socket extends Component {
   constructor(props) {
     super(props);
+
+    this.SelectSpell = (index) => {
+      const { magias } = this.state;
+      this.setState({ chosen: magias[index] });
+      console.log(`Magia${index + 1} escolhida!`);
+    };
+
     this.state = {
+      chosen: { type: '', element: '', confidence: 0.0 },
       magias: [
         { type: 'A', element: 'EILUW', confidence: '1' },
         { type: 'D', element: 'UWLCE', confidence: '2' },
@@ -25,7 +33,8 @@ export class Socket extends Component {
     });
 
     socket.on('update_hp', (data) => {
-      console.log(data);
+      console.log(JSON.parse(data));
+      this.setState({ chosen: { type: '', element: '', confidence: 0.0 } });
     });
 
     socket.on('start_turn', (data) => {
@@ -33,33 +42,30 @@ export class Socket extends Component {
       console.log(data);
       setTimeout(() => {
         console.log('fim do turno');
-        const index = Math.floor(Math.random() * 2);
-        const { magias } = this.state;
-        socket.emit('end_turn', magias[index]);
-      }, 10000);
+        // const index = Math.floor(Math.random() * 2);
+        // this.SelectSpell(index);
+        const { chosen } = this.state;
+        socket.emit('end_turn', chosen);
+      }, 5000);
     });
   }
 
   render() {
     return (
       <View>
-        {/* <Button
-          title="magia1"
+        <Button
+          title="Magia1"
           onPress={() => {
-            const { msg1, msg2 } = this.state;
-            socket.emit('end_turn', msg1);
-            console.log('end_turn message');
+            this.SelectSpell(0);
           }}
         />
 
         <Button
-          title="magia2"
+          title="Magia2"
           onPress={() => {
-            const { msg1, msg2 } = this.state;
-            socket.emit('end_turn', msg2);
-            console.log('end_turn message');
+            this.SelectSpell(1);
           }}
-        /> */}
+        />
       </View>
     );
   }

@@ -11,6 +11,8 @@ web-build/
 .vscode
 # macOS
 .DS_Store
+Servidor/.expo
+Servidor/venv/
 player2/node_modules
 player2/.vscode
 player2/.expo

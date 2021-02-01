@@ -51,6 +51,10 @@ class Game:
     def compara(self, spell1, spell2):
         CRITICO = 10
         damage = 0
+        if spell1.type == '':
+            return 0, spell2.confidence
+        elif spell2.type == '':
+            return spell1.confidence, 0
         if spell1.confidence > spell2.confidence:
             if spell1.attack and spell2.defense:
                 damage += spell1.confidence - spell2.confidence
@@ -93,12 +97,12 @@ class Game:
         #espero na porta por TIMEOUT segundos; devo receber uma string e um confidence
 
         #transformar as strings recebidas em spells, criar 
-        s1Index = self.decodeSpell(str(spellFromClient1.element))
-        s2Index = self.decodeSpell(str(spellFromClient2.element))
+        s1Index = self.decodeSpell(str(spellFromClient1['element']))
+        s2Index = self.decodeSpell(str(spellFromClient2['element']))
         self.player1.setSpell(s1Index)
         self.player2.setSpell(s2Index)
-        spell1 = Spell(spellFromClient1.confidence, spellFromClient1.type, self.spells[s1Index])
-        spell2 = Spell(spellFromClient2.confidence, spellFromClient2.type, self.spells[s2Index])
+        spell1 = Spell(float(spellFromClient1['confidence']), spellFromClient1['type'], self.spells[s1Index])
+        spell2 = Spell(float(spellFromClient2['confidence']), spellFromClient2['type'], self.spells[s2Index])
         
         damage1, damage2 = self.compara(spell1,spell2)
         print('damage1 = %s, damage2 = %s'%(damage1, damage2))

@@ -26,7 +26,7 @@ import CheckUp from '../components/CheckUp';
 import Suggestion from '../components/Suggestion';
 
 //configurações do websocket
-const URL = 'ws://192.168.0.110:';
+const URL = 'ws://192.168.0.115:';
 const PORTWS = 3000;
 const PORTSIO = 5000;
 const client = new W3CWebSocket(URL + PORTWS);
@@ -97,9 +97,12 @@ class Combat extends React.Component {
 
     client.onmessage = (message) => {
       const dataFromServer = JSON.parse(message.data);
-      
+
       if (dataFromServer.letter == this.state.choosenLetter) {
-        this.setState({ letterConfidence: this.state.letterConfidence + 0.2, spellConfidence:this.state.spellConfidence + dataFromServer.prob });
+        this.setState({
+          letterConfidence: this.state.letterConfidence + 0.2,
+          spellConfidence: this.state.spellConfidence + dataFromServer.prob,
+        });
       } else {
         this.setState({ letterConfidence: 0.0 });
       }
@@ -112,7 +115,7 @@ class Combat extends React.Component {
           letterConfidence: 0.0,
         });
       } else {
-        this.setState({ choosenLetter: dataFromServer.letter});
+        this.setState({ choosenLetter: dataFromServer.letter });
       }
     };
 
@@ -122,14 +125,14 @@ class Combat extends React.Component {
     });
 
     socket.on('update_hp', (data) => {
-      console.log('updating health points')
-      const healths = JSON.parse(data)
-      console.log(healths)
+      console.log('updating health points');
+      const healths = JSON.parse(data);
+      console.log(healths);
       this.setState({
         spelledWord: '',
-        hp: healths.player/100,
-        enemyHp: healths.enemy/100,
-        letterConfidence: 0,
+        hp: healths.player / 100,
+        enemyHp: healths.enemy / 100,
+        letterConfidence: 0.0,
         choosenLetter: '',
         spellConfidence: 0.0,
       });
@@ -137,7 +140,7 @@ class Combat extends React.Component {
 
     socket.on('start_turn', (data) => {
       console.log('Novo turno!');
-      let letters = JSON.parse(data)
+      let letters = JSON.parse(data);
       this.setState({
         buffedLetter: letters.buffedLetter,
         debuffedLetter: letters.debuffedLetter,
@@ -145,9 +148,9 @@ class Combat extends React.Component {
       setTimeout(() => {
         console.log('fim do turno');
         const { spelledWord, spellConfidence } = this.state;
-        console.log(spelledWord)
+        console.log(spelledWord);
         let spell = {
-          type: spelledWord[0] ? spelledWord[0]:'A',
+          type: spelledWord !== '' ? spelledWord[0] : '',
           element: spelledWord.slice(1),
           confidence: spellConfidence,
         };
@@ -173,7 +176,7 @@ class Combat extends React.Component {
             width={null}
             borderRadius={20}
             borderWidth={0}
-            unfilledColor="gray"
+            unfilledColor='gray'
             color={color}
             height={SCREEN_HEIGHT * 0.04}
             animated
