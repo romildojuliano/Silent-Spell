@@ -94,9 +94,8 @@ def end_turn(data):
             spell2 = users[enemyID]['spell']
             playerHP, enemyHP = games[gameID].end_turn(spell1, spell2)
             print('playerHP = %s, enemyHp = %s'%(playerHP,enemyHP))
-            emit('update_hp', json.dumps({'player':playerHP, 'enemy':enemyHP}), to=playerID)
-            emit('update_hp', json.dumps({'player':enemyHP, 'enemy':playerHP}), to=enemyID)
-            
+            emit('update_hp', json.dumps({'player':playerHP, 'enemy':enemyHP, 'playerSpell': spell1, 'enemySpell': spell2}), to=playerID)
+            emit('update_hp', json.dumps({'player':enemyHP, 'enemy':playerHP, 'playerSpell': spell2, 'enemySpell': spell1}), to=enemyID)
             spell1 = users[enemyID]['spell'] = None
             spell2 = users[playerID]['spell'] = None
 
