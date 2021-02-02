@@ -24,9 +24,10 @@ import io from 'socket.io-client';
 
 import CheckUp from '../components/CheckUp';
 import Suggestion from '../components/Suggestion';
+import LottieView from 'lottie-react-native';
 
 //configurações do websocket
-const URL = 'ws://192.168.0.115:';
+const URL = 'ws://192.168.0.110:';
 const PORTWS = 3000;
 const PORTSIO = 5000;
 const client = new W3CWebSocket(URL + PORTWS);
@@ -49,9 +50,12 @@ class Combat extends React.Component {
     hp: 1.0,
     enemyHp: 1.0,
     letterConfidence: 0.0,
+    playerSpellEffect:0,
+    enemySpellEffect: 0,
+    drawEffect: false,
     spellConfidence: 0.0,
     choosenLetter: '',
-    spelledWord: 'AEI',
+    spelledWord: '',
     showPopUp: true,
     buffedLetter: 'A',
     debuffedLetter: 'B',
@@ -128,14 +132,22 @@ class Combat extends React.Component {
       console.log('updating health points');
       const healths = JSON.parse(data);
       console.log(healths);
+      if (this.state.spelledWord.length > 1){
+        this.setState({drawEffect:true})
+      }
       this.setState({
         spelledWord: '',
         hp: healths.player / 100,
         enemyHp: healths.enemy / 100,
+        playerSpellEffect: healths.playerSpell,
+        enemySpellEffect: healths.enemySpell,
         letterConfidence: 0.0,
         choosenLetter: '',
         spellConfidence: 0.0,
       });
+      
+      
+      setTimeout(()=>{this.setState({drawEffect:false})},2000)
     });
 
     socket.on('start_turn', (data) => {
@@ -144,6 +156,7 @@ class Combat extends React.Component {
       this.setState({
         buffedLetter: letters.buffedLetter,
         debuffedLetter: letters.debuffedLetter,
+        showPopUp:true,
       });
       setTimeout(() => {
         console.log('fim do turno');
@@ -155,7 +168,7 @@ class Combat extends React.Component {
           confidence: spellConfidence,
         };
         socket.emit('end_turn', spell);
-      }, 30000);
+      }, 60000);
     });
 
     let [fontsLoaded] = useFonts({
@@ -213,6 +226,60 @@ class Combat extends React.Component {
       </Text>
     );
   };
+
+  magicEffect = (index) => {
+    if (this.state.drawEffect){
+      switch(index){
+        case 0:
+          return <LottieView source={require('../../assets/9990-explosion.json')} autoPlay />
+        case 1:
+          return <LottieView source={require('../../assets/30718-water-splash-effect.json')} autoPlay />
+        case 2:
+          return <LottieView source={require('../../assets/30714-puffy-smoke.json')} autoPlay />
+        case 3:
+          return <LottieView source={require('../../assets/30112-level-complete-confetti-effect.json')} autoPlay />
+        case 4:
+          return <LottieView source={require('../../assets/67-exploding-heart.json')} autoPlay />
+        case 5:
+          return <LottieView source={require('../../assets/36708-burst-effect.json')} autoPlay />
+      }
+    }else{
+      return null;
+    }
+  }
+
+  loserScreen = () =>{
+    if(this.state.hp <= 0.0){
+      return(
+      <Modal transparent={true} visible={this.state.showPopUp}>
+        <View
+          style={{
+            backgroundColor: '#000000aa',
+            flex: 1,
+            justifyContent: 'space-around',
+          }}
+        >
+          <Text style={{fontSize:40,fontColor:'white',flex:1,}}>Morreu!</Text>
+          </View>
+      </Modal>
+      );
+    }else if(this.state.enemyHp <= 0.0){
+      return(
+        <Modal transparent={true} visible={this.state.showPopUp}>
+          <View
+            style={{
+              backgroundColor: '#000000aa',
+              flex: 1,
+              justifyContent: 'space-around',
+            }}
+          >
+            <Text style={{fontSize:40,fontColor:'white',flex:1,}}>Morreu!</Text>
+            </View>
+        </Modal>
+        );
+    }
+    
+  }
 
   suggestionPopUp = () => {
     if (this.state.showPopUp) {
@@ -315,10 +382,13 @@ class Combat extends React.Component {
           <View style={styles.Player}>
             <View>
               {this.bar(this.state.enemyHp)}
-              <Image
-                source={require('./../../assets/wizard.jpg')}
-                style={styles.Enemy}
-              />
+              <View>
+                <Image
+                  source={require('./../../assets/wizard.jpg')}
+                  style={styles.Enemy}
+                />
+                {this.magicEffect(this.state.playerSpellEffect)}
+              </View>
             </View>
           </View>
 
@@ -346,10 +416,13 @@ class Combat extends React.Component {
           <View style={styles.Player}>
             <View>
               {this.bar(this.state.hp)}
-              {this.renderTensorCamera(textureDims, tensorDims)}
+              <View>
+                {this.magicEffect(this.state.enemySpellEffect)}
+                {this.renderTensorCamera(textureDims, tensorDims)}
+                
+              </View>
             </View>
           </View>
-
           {this.suggestionPopUp()}
         </View>
       );
