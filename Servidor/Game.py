@@ -94,7 +94,6 @@ class Game:
         return (buffedLetter, debuffedLetter)
     
     def end_turn(self, spellFromClient1, spellFromClient2):
-        #espero na porta por TIMEOUT segundos; devo receber uma string e um confidence
         print('spellREcebida = %s, %s'%(spellFromClient1,spellFromClient2))
         #transformar as strings recebidas em spells, criar 
         s1Index = self.decodeSpell(str(spellFromClient1['element']))
@@ -111,10 +110,11 @@ class Game:
             confidence = float(spellFromClient2['confidence'])
         spell2 = Spell(confidence, spellFromClient2['type'], self.spells[s2Index])
         
-        damage1, damage2 = self.compara(spell1,spell2)
-        print('damage1 = %s, damage2 = %s'%(damage1, damage2))
+        #aplica o dano
+        damageDealtByPlayer1, damageDealtByPlayer2 = self.compara(spell1,spell2)
+        print('damage1 = %s, damage2 = %s'%(damageDealtByPlayer1, damageDealtByPlayer2))
         print('detected Spell = %s, %s'%(self.spells[s1Index],self.spells[s2Index]))
-        self.player1.updateHealthPoints(damage1*10)
-        self.player2.updateHealthPoints(damage2*10)
+        self.player1.updateHealthPoints(damageDealtByPlayer2*10)
+        self.player2.updateHealthPoints(damageDealtByPlayer1*10)
 
         return (self.player1.healthPoints, self.player2.healthPoints, s1Index, s2Index)

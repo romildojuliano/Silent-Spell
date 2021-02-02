@@ -42,19 +42,19 @@ def connect():
 @socketio.on('disconnect')
 def disconnect():
     global matching
-    playerID = request.sid
-    print(f'Disconnecting user {playerID}!')
-    if matching == playerID:
+    userID = request.sid
+    print(f'Disconnecting user {userID}!')
+    if matching == userID:
         matching = ''
 
-    if users[playerID]['enemy']:
-        enemyID = users[playerID]['enemy']
-        users[enemyID] = {'enemy': '', 'first': None, 'spell': None}
+    if users[userID]['enemy']:
+        enemyID = users[userID]['enemy']
+        users[enemyID] = {'enemy': None, 'first': None, 'spell': None}
         print(f'user {enemyID} is waiting for an oponent!')
-        gameID = playerID + enemyID if users[playerID]['first'] else enemyID+playerID 
-        leave_room(gameID, playerID)
+        gameID = userID + enemyID if users[userID]['first'] else enemyID+userID 
+        leave_room(gameID, userID)
         leave_room(gameID, enemyID)
-        users.pop(playerID)
+        users.pop(userID)
         games.pop(gameID)
         if matching == '':
             matching = enemyID
@@ -63,7 +63,7 @@ def disconnect():
             add_game(matching, enemyID)
             matching = ''
     else:
-        users.pop(playerID)
+        users.pop(userID)
 
     print(f'Number of users: {len(users)}')
     print(f'Number of games: {len(games)}')
@@ -77,27 +77,25 @@ def end_turn(data):
     global buffed
     global debuffed
     try:
-        playerID = request.sid
-        enemyID = users[playerID]['enemy']
-        gameID = playerID + enemyID if users[playerID]['first'] else enemyID+playerID
-        print('playerID: {}, enemyID: {}, gameID: {}'.format(playerID, enemyID, gameID))
+        userID = request.sid
+        enemyID = users[userID]['enemy']
+        gameID = userID + enemyID if users[userID]['first'] else enemyID + userID
+        print('userID: {}, first: {}, enemyID: {}, gameID: {}'.format(userID,users[userID]['first'], enemyID, gameID))
         print(f'Data from player:{data}')
         
-        users[playerID]['spell'] = data
+        users[userID]['spell'] = data
         if users[enemyID]['spell'] != None:
-            if not users[playerID]['first']:
-                temp = playerID
-                playerID = enemyID
-                enemyID = temp
+            player1 = games[gameID].player1.id
+            player2 = games[gameID].player2.id
 
-            spell1 = users[playerID]['spell']
-            spell2 = users[enemyID]['spell']
-            enemyHP, playerHP, s1Index, s2Index = games[gameID].end_turn(spell1, spell2)
-            print('playerHP = %s, enemyHp = %s'%(playerHP,enemyHP))
-            emit('update_hp', json.dumps({'player':playerHP, 'enemy':enemyHP, 'playerSpell': s1Index, 'enemySpell': s2Index}), to=playerID)
-            emit('update_hp', json.dumps({'player':enemyHP, 'enemy':playerHP, 'playerSpell': s2Index, 'enemySpell': s1Index}), to=enemyID)
-            spell1 = users[enemyID]['spell'] = None
-            spell2 = users[playerID]['spell'] = None
+            spell1 = users[player1]['spell']
+            spell2 = users[player2]['spell']
+            player1HP, player2HP, s1Index, s2Index = games[gameID].end_turn(spell1, spell2)
+            print(f'player1HP:{player1HP}, spell:{s1Index}, player2HP:{player2HP}, spell:{s2Index}')
+            emit('update_hp', json.dumps({'player':player1HP, 'enemy':player2HP, 'playerSpell': s1Index, 'enemySpell': s2Index}), to=player1)
+            emit('update_hp', json.dumps({'player':player2HP, 'enemy':player1HP, 'playerSpell': s2Index, 'enemySpell': s1Index}), to=player2)
+            users[player1]['spell'] = None
+            users[player2]['spell'] = None
 
             buffed, debuffed = games[gameID].start_turn()
             emit('start_turn', json.dumps({'buffedLetter': buffed, 'debuffedLetter':debuffed}), to=gameID)
