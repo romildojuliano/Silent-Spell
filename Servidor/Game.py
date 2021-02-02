@@ -109,4 +109,4 @@ class Game:
         self.player1.updateHealthPoints(damage1*10)
         self.player2.updateHealthPoints(damage2*10)
 
-        return (self.player1.healthPoints, self.player2.healthPoints)
+        return (self.player1.healthPoints, self.player2.healthPoints, s1Index, s2Index)
