@@ -25,16 +25,13 @@ pip install websockets
 ```
 
 ## Como rodar?
-altere os ips nos arquivos src/screens/TrackHandsScreen.js e src/screens/Combat.js para o ip de onde você está rodando seu servidor.
+Altere os IPs nos arquivos src/screens/TrackHandsScreen.js e src/screens/Combat.js para o ip de onde você está rodando seu servidor.
 
-no terminal caminhe para a pasta 'Servidor/' e execute o seguinte comando
+No terminal caminhe para a pasta 'Servidor/' e execute o seguinte comando: ```python app.py```
 
-```python app.py```
-em outro terminal caminhe até a pasta 'Servidor/' e execute o seguinte comando:
+Em outro terminal caminhe até a pasta 'Servidor/' e execute o seguinte comando: ```python server.py```
 
-```python server.py```
-
-em outro terminal digite 'expo start' dentro da pasta e escaneie o QR code usando o aplicativo expo no seu celular.
+Em outro terminal digite ```expo start``` dentro da pasta e escaneie o QR code usando o aplicativo expo no seu celular.
 
 # Pequena demonstração do multiplayer
 [![Multiplayer example](combatScreen.jpeg)](https://www.youtube.com/watch?v=UGJroL4UolU)
